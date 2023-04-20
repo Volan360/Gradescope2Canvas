@@ -16,14 +16,31 @@ if __name__ == "__main__":
         for row in csvReader:
             if(row['Name'] == '' or row['Tags'] == None):
                 continue
-            if row['Email'] not in gradeScopeScores:
-                gradeScopeScores[row['Email']] = {}
+            if row['Name'] not in gradeScopeScores:
+                gradeScopeScores[row['Name']] = {}
+            if gradescopeFile not in gradeScopeScores[row['Name']]:
+                gradeScopeScores[row['Name']][gradescopeFile] = {}
             for tag in row['Tags'].split(','):
-                if tag not in gradeScopeScores[row['Email']]:
-                    gradeScopeScores[row['Email']][tag] = float(row['Score'])
+                if tag not in gradeScopeScores[row['Name']][gradescopeFile]:
+                    gradeScopeScores[row['Name']][gradescopeFile][tag] = float(row['Score'])
                 else:
-                    gradeScopeScores[row['Email']][tag] += float(row['Score'])
-    for studentScores in gradeScopeScores:
-        print(gradeScopeScores[studentScores])
-
+                    gradeScopeScores[row['Name']][gradescopeFile][tag] += float(row['Score'])
         csvFile.close()
+
+    #for student in gradeScopeScores:
+        # for assignment in gradeScopeScores[student]:
+        #     for tag in gradeScopeScores[student][assignment]:
+        #         #open the Canvas file Rubric Scores [tag].csv
+        #         csvFile = open(CANVAS_FILE_PATH + "Rubric Scores " + tag + ".csv", 'r')
+        #         csvReader = csv.DictReader(csvFile)
+        #         #check if the assignment is one of the columns
+        #         if assignment not in csvReader.fieldnames:
+        #             #if not, add it
+        #             csvReader.fieldnames.insert(assignment)
+        #         #find the row with the student's name
+        #         for row in csvReader:
+        #             if row['Student'] == student:
+        #                 #add the score to the row
+        #                 row[assignment] = gradeScopeScores[student][assignment][tag]
+        #                 break
+
