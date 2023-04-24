@@ -1,6 +1,11 @@
 import os
 import csv
-
+#Add in functionality to choose what column name you will use to match the students on Canvas and Gradescope
+#Add in another script/functionality to remove a column from gradescope
+#Maybe add logic to check that a score isn't above the maximum allowed
+#Students can resubit assignments, as a separate Gradescope assignment but this will update the existing Canvas assignment
+#For resubmissions, the input folder for Gradescope will have the folder with the original assignment name and then a folder original assignment name + "_Resubmission"
+#For resubmissions, if the student has a score of > 0 for a problem they already had a score for, then the score FOR THE ENTIRE ASSINGMENT WILL BE A 0
 CANVAS_FILE_PATH = "../Canvas/"
 GRADESCOPE_FILE_PATH = "../Gradescope/"
 OUTPUT_FILE_PATH = "../Output/"
