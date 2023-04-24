@@ -37,7 +37,8 @@ def updateCanvasScores(gradeScopeScores):
         for field in csvReader.fieldnames:
             fieldnames.append(field)
         for assignment in gradeScopeScores[tag]:
-            fieldnames.append(assignment)
+            if assignment not in fieldnames:
+                fieldnames.append(assignment)
         csvWriter = csv.DictWriter(csvOutput, fieldnames=fieldnames)
         csvWriter.writeheader()
         for assignment in gradeScopeScores[tag]:
