@@ -85,7 +85,7 @@ def removeCanvasAssignment(assignment):
             csvWriter.writerow(row)
         csvInput.close()
         csvOutput.close()
-def regradeAssignment(initialAssignment, resubmissionAssignment, gradescopeColumn):
+def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
     #need logic to find the score of each question to check if they're doubling up
     #if their score on a question was > 0 in the initial assignment, then their score for THE WHOLE resubmission assignment will be 0
     #otherwise, add the scores together
@@ -107,9 +107,19 @@ def regradeAssignment(initialAssignment, resubmissionAssignment, gradescopeColum
         for student in studentScores:
             if studentScores[student]["Initial"] > 0 and studentScores[student]["Resubmission"] > 0:
                 cheatingStudents.append(student)
-    print("The following students cheated on the assignment " + initialAssignment + " by resubmitting the assignment " + resubmissionAssignment + " even though they had credit: ")
-
-
+    return cheatingStudents
+def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn):
+    initialScores = getGradescopeScores(initialAssignment, gradescopeColumn)
+    resubmissionScores = getGradescopeScores(resubmissionAssignment, gradescopeColumn)
+    cheatingStudents = getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn)
+    for tag in initialScores:
+        for assignment in initialScores[tag]:
+            for student in initialScores[tag][assignment]:
+                if student in cheatingStudents:
+                    initialScores[tag][assignment][student] = 0
+                else:
+                    initialScores[tag][assignment][student] += resubmissionScores[tag][assignment][student]
+    return initialScores
 
 if __name__ == "__main__":
     #get a list of the file paths in the ../Canvas/ directory
@@ -142,6 +152,9 @@ if __name__ == "__main__":
         canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
         if canvasColumn == '':
             canvasColumn = 'Student Name'
+        scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
+        print(scores)
+        updateCanvasScores(scores, canvasColumn)
 
     elif command == 'rm':
         removeColumn = input("Please input the assignment name you would like to remove from the Canvas file: ")
