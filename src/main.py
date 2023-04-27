@@ -36,13 +36,17 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
         csvOutput = open(OUTPUT_FILE_PATH + "Updated Rubric Scores " + tag + ".csv", 'w', newline='')
         csvReader = csv.DictReader(csvInput)
         fieldnames = []
+        skipFields = []
         for field in csvReader.fieldnames:
+            if "Posted Score" in field or "Attempt Number" in field or "Rating: " in field:
+                skipFields.append(field)
+                continue
             fieldnames.append(field)
         for assignment in gradeScopeScores[tag]:
-            if assignment not in fieldnames:
+            if "Points: " + assignment not in fieldnames:
                 confirmation = input("Would you like to add the assignment " + assignment + " to the Canvas file for " + tag +"? (y/n): ")
                 if confirmation == 'y':
-                    fieldnames.append(assignment)
+                    fieldnames.append("Points: " + assignment)
                 else:
                     print("Canceling grade conversion, please delete all files in the Output folder and try again")
                     return
@@ -57,7 +61,11 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
             for row in csvReader:
                 if row[canvasColumn] in gradeScopeScores[tag][assignment]:
                     #print(row[canvasColumn] + " " + tag + " " + assignment + " " + str(gradeScopeScores[tag][assignment][row[canvasColumn]]))
-                    row[assignment] = str(gradeScopeScores[tag][assignment][row[canvasColumn]])
+                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][row[canvasColumn]]))
+                else:
+                    row["Points: " + assignment] = '0'
+                for field in skipFields:
+                    row.pop(field)
                 csvWriter.writerow(row)
         csvInput.close()
         csvOutput.close()

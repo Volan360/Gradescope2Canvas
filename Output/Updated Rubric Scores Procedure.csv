@@ -1,8 +1,8 @@
-Student Name,Student ID,Posted Score,Attempt Number,Rating: In-Lab #1,Points: In-Lab #1,Rating: Lab Report #1,Points: Lab Report #1,Rating: In-Lab #2,Points: In-Lab #2,Rating: Lab Report #2,Points: Lab Report #2,Rating: In-Lab #3,Points: In-Lab #3,Rating: Lab Report #3,Points: Lab Report #3,Rating: In-Lab #4,Points: In-Lab #4,Rating: Lab Report #4,Points: Lab Report #4,Fundamental Skills 1
-William James Howitz,000001293942,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-Yong Li,000001411224,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,3.0
-Joe Christopher Gonzales,000001471277,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-Taylor Luanna Frey,000001474701,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-Shannon Saluga,000001712852,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1.0
-Abdelrahman Tarek Sallam,000001858149,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-Test Student,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+Student Name,Student ID,Points: In-Lab #1,Points: Lab Report #1,Points: In-Lab #2,Points: Lab Report #2,Points: In-Lab #3,Points: Lab Report #3,Points: In-Lab #4,Points: Lab Report #4,Points: Fundamental Skills 1
+William James Howitz,000001293942,null,null,null,null,null,null,null,null,0
+Yong Li,000001411224,null,null,null,null,null,null,null,null,3
+Joe Christopher Gonzales,000001471277,null,null,null,null,null,null,null,null,0
+Taylor Luanna Frey,000001474701,null,null,null,null,null,null,null,null,0
+Shannon Saluga,000001712852,null,null,null,null,null,null,null,null,1
+Abdelrahman Tarek Sallam,000001858149,null,null,null,null,null,null,null,null,0
+Test Student,null,null,null,null,null,null,null,null,null,0
