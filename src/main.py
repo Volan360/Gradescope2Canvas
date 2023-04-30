@@ -1,12 +1,22 @@
 import os
 import csv
 from canvasapi import Canvas
+import yaml
 #Students can resubit assignments, as a separate Gradescope assignment but this will update the existing Canvas assignment
 #For resubmissions, the input folder for Gradescope will have the folder with the original assignment name and then a folder original assignment name + "_Resubmission"
 #For resubmissions, if the student has a score of > 0 for a problem they already had a score for, then the score FOR THE ENTIRE ASSINGMENT WILL BE A 0
 CANVAS_FILE_PATH = "../Canvas/"
 GRADESCOPE_FILE_PATH = "../Gradescope/"
 OUTPUT_FILE_PATH = "../Output/"
+API_URL = "https://canvas.instructure.com"
+#open config.yaml for api key, first line
+API_KEY = open("../config.yaml", 'r').readline().split(':')[1].strip()
+#open config.yaml for the course id, second line
+COURSE_ID = open("../config.yaml", 'r').readlines()[1].split(':')[1].strip()
+#open the config.yaml for the assignment id, third line
+ASSIGNMENT_ID = int(open("../config.yaml", 'r').readlines()[2].split(':')[1].strip())
+RUBRIC_ID = int(open("../config.yaml", 'r').readlines()[3].split(':')[1].strip())
+STUDENT_ID = 208075
 def getGradescopeScores(assignment, gradescopeColumn):
     gradeScopeScores = {}
     for question in os.listdir(GRADESCOPE_FILE_PATH + assignment):
@@ -132,9 +142,21 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
     return initialScores
 
 if __name__ == "__main__":
-    #get a list of the file paths in the ../Canvas/ directory
+    # canvas = Canvas(API_URL, API_KEY)
+    # course = canvas.get_course(COURSE_ID)
+    # rubric = course.get_rubric(RUBRIC_ID)
+    # print(rubric)
+    # assignment = course.get_assignment(ASSIGNMENT_ID)
+    # print(assignment)
+    # association = course.create_rubric_association(rubric_id=RUBRIC_ID, association_id=ASSIGNMENT_ID, association_type='Assignment',
+    #                                                use_for_grading=True, purpose='grading')
+    # print(association)
+    # submissions = assignment.get_submissions()
+    # #update the grade at rubric_assessment[Fundamental Skills 1][points] to 2
+    # res = submissions[0].edit(submission={'rubric_assessment': {'Fundamental Skills 1': {'points': 2}}})
+    # print(yaml.dump(res))
+
     canvasFileList = os.listdir(CANVAS_FILE_PATH)
-    #get a list of the file paths in the ../Gradescope/ directory
     gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
     command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
     while command != 'g' and command != 'r' and command != 'rm':
