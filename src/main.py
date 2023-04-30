@@ -1,5 +1,6 @@
 import os
 import csv
+from canvasapi import Canvas
 #Students can resubit assignments, as a separate Gradescope assignment but this will update the existing Canvas assignment
 #For resubmissions, the input folder for Gradescope will have the folder with the original assignment name and then a folder original assignment name + "_Resubmission"
 #For resubmissions, if the student has a score of > 0 for a problem they already had a score for, then the score FOR THE ENTIRE ASSINGMENT WILL BE A 0
@@ -46,6 +47,7 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
             if "Points: " + assignment not in fieldnames:
                 confirmation = input("Would you like to add the assignment " + assignment + " to the Canvas file for " + tag +"? (y/n): ")
                 if confirmation == 'y':
+                    print("Ok, please make sure the assignment " + assignment + " is added to the Canvas rubric for " + tag)
                     fieldnames.append("Points: " + assignment)
                 else:
                     print("Canceling grade conversion, please delete all files in the Output folder and try again")
