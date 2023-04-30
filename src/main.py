@@ -144,18 +144,11 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
 if __name__ == "__main__":
     # canvas = Canvas(API_URL, API_KEY)
     # course = canvas.get_course(COURSE_ID)
-    # rubric = course.get_rubric(RUBRIC_ID)
-    # print(rubric)
     # assignment = course.get_assignment(ASSIGNMENT_ID)
-    # print(assignment)
-    # association = course.create_rubric_association(rubric_id=RUBRIC_ID, association_id=ASSIGNMENT_ID, association_type='Assignment',
-    #                                                use_for_grading=True, purpose='grading')
-    # print(association)
     # submissions = assignment.get_submissions()
-    # #update the grade at rubric_assessment[Fundamental Skills 1][points] to 2
-    # res = submissions[0].edit(submission={'rubric_assessment': {'Fundamental Skills 1': {'points': 2}}})
-    # print(yaml.dump(res))
-
+    # for submission in submissions:
+    #     res = submissions[0].edit(rubric_assessment={'Fundamental Skills 1': {'points': 2}})
+    #
     canvasFileList = os.listdir(CANVAS_FILE_PATH)
     gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
     command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
