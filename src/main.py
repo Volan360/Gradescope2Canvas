@@ -142,46 +142,51 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
     return initialScores
 
 if __name__ == "__main__":
-    # canvas = Canvas(API_URL, API_KEY)
-    # course = canvas.get_course(COURSE_ID)
-    # assignment = course.get_assignment(ASSIGNMENT_ID)
-    # submissions = assignment.get_submissions()
-    # for submission in submissions:
-    #     res = submissions[0].edit(rubric_assessment={'Fundamental Skills 1': {'points': 2}})
+    canvas = Canvas(API_URL, API_KEY)
+    course = canvas.get_course(COURSE_ID)
+    assignment = course.get_assignment(ASSIGNMENT_ID)
+    print(assignment.rubric)
+    criterion_id = ""
+    for criterion in assignment.rubric:
+        if criterion['description'] == "Fundamental Skills 1":
+            criterion_id = criterion['id']
+    submissions = assignment.get_submissions(include=['rubric_assessment', 'user'])
+    for submission in submissions:
+        res = submission.edit(rubric_assessment={criterion_id: {'points': 2}})
     #
-    canvasFileList = os.listdir(CANVAS_FILE_PATH)
-    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
-    command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
-    while command != 'g' and command != 'r' and command != 'rm':
-        command = input("Invalid command, please enter g, r, or rm: ")
-    if command == 'g':
-        gradescopeColumn = input("Please input the Gradescope column name you would like to use to match students with. Default is Name: ")
-        if gradescopeColumn == '':
-            gradescopeColumn = 'Name'
-        canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
-        if canvasColumn == '':
-            canvasColumn = 'Student Name'
-        for assignment in gradescopeAssignmentList:
-            scores = getGradescopeScores(assignment, gradescopeColumn)
-            print(scores)
-            updateCanvasScores(scores, canvasColumn)
-    elif command == 'r':
-        print("Resubmission")
-        initialAssignment = input("Please input the name of the initial assignment: ")
-        resubmissionAssignment = input("Please input the name of the resubmission assignment (default is initial assignemnt name with _Resubmission added to the end: ")
-        if resubmissionAssignment == '':
-            resubmissionAssignment = initialAssignment + "_Resubmission"
-        gradescopeColumn = input("Please input the Gradescope column name you would like to use to match students with. Default is Name: ")
-        if gradescopeColumn == '':
-            gradescopeColumn = 'Name'
-        canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
-        if canvasColumn == '':
-            canvasColumn = 'Student Name'
-        scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
-        print(scores)
-        updateCanvasScores(scores, canvasColumn)
-
-    elif command == 'rm':
-        removeColumn = input("Please input the assignment name you would like to remove from the Canvas file: ")
-        removeCanvasAssignment(removeColumn)
+    # canvasFileList = os.listdir(CANVAS_FILE_PATH)
+    # gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    # command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
+    # while command != 'g' and command != 'r' and command != 'rm':
+    #     command = input("Invalid command, please enter g, r, or rm: ")
+    # if command == 'g':
+    #     gradescopeColumn = input("Please input the Gradescope column name you would like to use to match students with. Default is Name: ")
+    #     if gradescopeColumn == '':
+    #         gradescopeColumn = 'Name'
+    #     canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
+    #     if canvasColumn == '':
+    #         canvasColumn = 'Student Name'
+    #     for assignment in gradescopeAssignmentList:
+    #         scores = getGradescopeScores(assignment, gradescopeColumn)
+    #         print(scores)
+    #         updateCanvasScores(scores, canvasColumn)
+    # elif command == 'r':
+    #     print("Resubmission")
+    #     initialAssignment = input("Please input the name of the initial assignment: ")
+    #     resubmissionAssignment = input("Please input the name of the resubmission assignment (default is initial assignemnt name with _Resubmission added to the end: ")
+    #     if resubmissionAssignment == '':
+    #         resubmissionAssignment = initialAssignment + "_Resubmission"
+    #     gradescopeColumn = input("Please input the Gradescope column name you would like to use to match students with. Default is Name: ")
+    #     if gradescopeColumn == '':
+    #         gradescopeColumn = 'Name'
+    #     canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
+    #     if canvasColumn == '':
+    #         canvasColumn = 'Student Name'
+    #     scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
+    #     print(scores)
+    #     updateCanvasScores(scores, canvasColumn)
+    #
+    # elif command == 'rm':
+    #     removeColumn = input("Please input the assignment name you would like to remove from the Canvas file: ")
+    #     removeCanvasAssignment(removeColumn)
 
