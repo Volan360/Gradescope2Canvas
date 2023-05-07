@@ -2,21 +2,12 @@ import os
 import csv
 from canvasapi import Canvas
 import yaml
-#Students can resubit assignments, as a separate Gradescope assignment but this will update the existing Canvas assignment
-#For resubmissions, the input folder for Gradescope will have the folder with the original assignment name and then a folder original assignment name + "_Resubmission"
-#For resubmissions, if the student has a score of > 0 for a problem they already had a score for, then the score FOR THE ENTIRE ASSINGMENT WILL BE A 0
 CANVAS_FILE_PATH = "../Canvas/"
 GRADESCOPE_FILE_PATH = "../Gradescope/"
 OUTPUT_FILE_PATH = "../Output/"
 API_URL = "https://canvas.instructure.com"
-#open config.yaml for api key, first line
-API_KEY = open("../config.yaml", 'r').readline().split(':')[1].strip()
-#open config.yaml for the course id, second line
-COURSE_ID = open("../config.yaml", 'r').readlines()[1].split(':')[1].strip()
-#open the config.yaml for the assignment id, third line
-ASSIGNMENT_ID = int(open("../config.yaml", 'r').readlines()[2].split(':')[1].strip())
-RUBRIC_ID = int(open("../config.yaml", 'r').readlines()[3].split(':')[1].strip())
-STUDENT_ID = 208075
+
+#Make a function called "Get Course Info" that takes in a course name and returns the course ID, as well as assignment IDs and names
 def getGradescopeScores(assignment, gradescopeColumn):
     gradeScopeScores = {}
     for question in os.listdir(GRADESCOPE_FILE_PATH + assignment):
@@ -31,12 +22,14 @@ def getGradescopeScores(assignment, gradescopeColumn):
                 if assignment not in gradeScopeScores[tag]:
                     gradeScopeScores[tag][assignment] = {}
                 if row[gradescopeColumn] not in gradeScopeScores[tag][assignment]:
-                    gradeScopeScores[tag][assignment][row[gradescopeColumn]] = float(row['Score'])
+                    userLogin = row[gradescopeColumn].split('@')[0]
+                    gradeScopeScores[tag][assignment][userLogin] = float(row['Score'])
                 else:
-                    gradeScopeScores[tag][assignment][row[gradescopeColumn]] += float(row['Score'])
+                    gradeScopeScores[tag][assignment][userLogin] += float(row['Score'])
         csvFile.close()
     return gradeScopeScores
 
+#WE MOST LIKELY WON'T NEED THIS FUNCTION ANYMORE, SINCE WE CAN UPLOAD THE GRADESCOPE SCORES TO CANVAS AUTOMATICALLY
 def updateCanvasScores(gradeScopeScores, canvasColumn):
     for tag in gradeScopeScores:
         try:
@@ -81,6 +74,8 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
                 csvWriter.writerow(row)
         csvInput.close()
         csvOutput.close()
+
+#CHANGE THIS FUNCTION TO USE THE CANVAS API INSTEAD OF THE CSV FILES
 def removeCanvasAssignment(assignment):
     for rubricScoresFile in os.listdir(CANVAS_FILE_PATH):
         try:
@@ -106,9 +101,6 @@ def removeCanvasAssignment(assignment):
         csvInput.close()
         csvOutput.close()
 def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
-    #need logic to find the score of each question to check if they're doubling up
-    #if their score on a question was > 0 in the initial assignment, then their score for THE WHOLE resubmission assignment will be 0
-    #otherwise, add the scores together
     cheatingStudents = []
     for question in os.listdir(CANVAS_FILE_PATH + initialAssignment):
         initialReader = csv.DictReader(open(CANVAS_FILE_PATH + initialAssignment + '/' + question, 'r'))
@@ -141,35 +133,55 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
                     initialScores[tag][assignment][student] += resubmissionScores[tag][assignment][student]
     return initialScores
 
-if __name__ == "__main__":
-    canvas = Canvas(API_URL, API_KEY)
-    course = canvas.get_course(COURSE_ID)
-    assignment = course.get_assignment(ASSIGNMENT_ID)
-    print(assignment.rubric)
+def uploadCanvasScores(assignment, criterionName, assignmentScores):
     criterion_id = ""
     for criterion in assignment.rubric:
-        if criterion['description'] == "Fundamental Skills 1":
+        if criterion['description'] == criterionName:
             criterion_id = criterion['id']
     submissions = assignment.get_submissions(include=['rubric_assessment', 'user'])
     for submission in submissions:
-        res = submission.edit(rubric_assessment={criterion_id: {'points': 2}})
-    #
-    # canvasFileList = os.listdir(CANVAS_FILE_PATH)
-    # gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
-    # command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
-    # while command != 'g' and command != 'r' and command != 'rm':
-    #     command = input("Invalid command, please enter g, r, or rm: ")
-    # if command == 'g':
-    #     gradescopeColumn = input("Please input the Gradescope column name you would like to use to match students with. Default is Name: ")
-    #     if gradescopeColumn == '':
-    #         gradescopeColumn = 'Name'
-    #     canvasColumn = input("Please input the Canvas column name you would like to use to match students with. Default is Student Name: ")
-    #     if canvasColumn == '':
-    #         canvasColumn = 'Student Name'
-    #     for assignment in gradescopeAssignmentList:
-    #         scores = getGradescopeScores(assignment, gradescopeColumn)
-    #         print(scores)
-    #         updateCanvasScores(scores, canvasColumn)
+        emailPrefix = submission.user['login_id']
+        try:
+            submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[emailPrefix]}})
+            print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
+        except:
+            print("Could not find the student " + submission.user['short_name'] + " in the Gradescope file for " + assignment.name)
+            continue
+if __name__ == "__main__":
+    #read config.yaml with yaml library
+    with open("../config.yaml", 'r') as stream:
+        try:
+            config = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    #set variables from config
+    apiKey = config['API_KEY']
+    courseId = config['COURSE_ID']
+    canvas = Canvas(API_URL, apiKey)
+    course = canvas.get_course(courseId)
+
+    canvasFileList = os.listdir(CANVAS_FILE_PATH)
+    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    gradescopeColumn = 'Email'
+    command = input("Grade, Resubmission, or Remove? (g/r/rm): ")
+    while command != 'g' and command != 'r' and command != 'rm':
+        command = input("Invalid command, please enter g, r, or rm: ")
+    if command == 'g':
+        for assignment in gradescopeAssignmentList:
+            scores = getGradescopeScores(assignment, gradescopeColumn)
+            print(scores)
+            for bundle in scores:
+                canvasAssignment = course.get_assignment(config['ASSIGNMENTS'][bundle])
+                try:
+                    rubric = canvasAssignment.rubric
+                except:
+                    print("Could not find rubric for assignment " + bundle)
+                    continue
+                for criterion in scores[bundle]:
+                    uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion])
+
+
+    #AS OF YET UNTESTED (NEED TO CHANGE IT TO USE CANVAS API AS WELL, ONCE WE HAVE TESTING DATA)
     # elif command == 'r':
     #     print("Resubmission")
     #     initialAssignment = input("Please input the name of the initial assignment: ")
