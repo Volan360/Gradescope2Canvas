@@ -161,16 +161,37 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
 if __name__ == "__main__":
     #set variables from config
     apiKey = CONFIG['CANVAS_API']['KEY']
-    courseId = CONFIG['CANVAS_API']['COURSE_ID']
     canvas = Canvas(API_URL, apiKey)
-    course = canvas.get_course(courseId)
 
-    canvasFileList = os.listdir(CANVAS_FILE_PATH)
-    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
-    command = input("Grade, Resubmission, or Remove? (G/R/RM): ")
-    while command != 'G' and command != 'R' and command != 'RM':
-        command = input("Invalid command, please enter G, R, or RM: ")
-    if command == 'G':
+    command = input("Grade, Resubmission, Remove, or Course Info? (G/R/RM/CI): ")
+    while command != 'G' and command != 'R' and command != 'RM' and command != 'CI':
+        command = input("Invalid command, please enter G, R, RM, or CI: ")
+    if command == 'CI':
+        courseName = input("Please enter the name of the course you want info on, as displayed on canvas: ")
+        yamlInfo = ""
+        for course in canvas.get_courses():
+            try:
+                if course.name == courseName:
+                    yamlInfo += "COURSE_ID: " + str(course.id) + "\nASSIGNMENTS:\n"
+                    for assignment in course.get_assignments():
+                        yamlInfo += "\t" + assignment.name + ": " + str(assignment.id) + "\n"
+                    break
+            except:
+                continue
+        #write the yaml info into a text file
+        yamlFile = open("courseInfo.txt", 'w')
+        yamlFile.write(yamlInfo)
+        yamlFile.close()
+        print("Finished writing course info to courseInfo.txt, located in the same folder as this program (might show up after you close this window)")
+        print("Please copy and paste the information into the config.yaml file, indented under the CANVAS_API section")
+        print("Please also make sure that all assignments that aren't connected to rubrics (everything that isn't a bundle) are removed from the config file")
+        input("Press enter to exit")
+    elif command == 'G':
+        courseId = CONFIG['CANVAS_API']['COURSE_ID']
+        course = canvas.get_course(courseId)
+
+        canvasFileList = os.listdir(CANVAS_FILE_PATH)
+        gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
         emailOrSID = input("Email or SID (E/S): ")
         while emailOrSID != 'E' and emailOrSID != 'S':
             gradescopeColumn = input("Invalid column, please enter E or S: ")
