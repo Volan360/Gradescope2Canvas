@@ -18,7 +18,7 @@ def getGradescopeScores(assignment, gradescopeColumn):
         csvFile = open(GRADESCOPE_FILE_PATH + assignment + '/' + question, 'r')
         csvReader = csv.DictReader(csvFile)
         for row in csvReader:
-            if(row[gradescopeColumn] == '' or row['Tags'] == None):
+            if not row[gradescopeColumn] or not row['Tags']:
                 continue
             if '@' in row[gradescopeColumn]:
                 userLogin = row[gradescopeColumn].split('@')[0]
@@ -109,35 +109,47 @@ def removeCanvasAssignment(assignment):
         csvOutput.close()
 def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
     cheatingStudents = []
-    for question in os.listdir(CANVAS_FILE_PATH + initialAssignment):
-        initialReader = csv.DictReader(open(CANVAS_FILE_PATH + initialAssignment + '/' + question, 'r'))
-        resubmissionReader = csv.DictReader(open(CANVAS_FILE_PATH + resubmissionAssignment + '/' + question, 'r'))
-        studentScores = {}
+    for question in os.listdir(GRADESCOPE_FILE_PATH + initialAssignment):
+        initialReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + initialAssignment + '/' + question, 'r'))
+        resubmissionReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + resubmissionAssignment + '/' + question, 'r'))
+        initialScores = {}
+        resubmissionScores = {}
         for row in initialReader:
-            if row[gradescopeColumn] == '':
+            if not row[gradescopeColumn] or not row['Tags']:
                 continue
-            studentScores[row[gradescopeColumn]]["Initial"] = float(row['Score'])
+            if '@' in row[gradescopeColumn]:
+                userLogin = row[gradescopeColumn].split('@')[0]
+            else:
+                userLogin = row[gradescopeColumn]
+            if not userLogin in initialScores:
+                initialScores[userLogin] = {}
+            initialScores[userLogin][question] = float(row['Score'])
         for row in resubmissionReader:
-            if row[gradescopeColumn] == '':
+            if not row[gradescopeColumn] or not row['Tags']:
                 continue
-            if row[gradescopeColumn] not in studentScores:
-                studentScores[row[gradescopeColumn]] = {}
-            studentScores[row[gradescopeColumn]]["Resubmission"] = float(row['Score'])
-        for student in studentScores:
-            if studentScores[student]["Initial"] > 0 and studentScores[student]["Resubmission"] > 0:
+            if '@' in row[gradescopeColumn]:
+                userLogin = row[gradescopeColumn].split('@')[0]
+            else:
+                userLogin = row[gradescopeColumn]
+            if not userLogin in resubmissionScores:
+                resubmissionScores[userLogin] = {}
+            resubmissionScores[userLogin][question] = float(row['Score'])
+        for student in resubmissionScores:
+            if initialScores[student][question] > 0 and resubmissionScores[student][question] > 0:
                 cheatingStudents.append(student)
+        print(initialScores)
+        print(resubmissionScores)
     return cheatingStudents
 def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn):
     initialScores = getGradescopeScores(initialAssignment, gradescopeColumn)
     resubmissionScores = getGradescopeScores(resubmissionAssignment, gradescopeColumn)
     cheatingStudents = getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn)
+    print(cheatingStudents)
     for tag in initialScores:
         for assignment in initialScores[tag]:
             for student in initialScores[tag][assignment]:
                 if student in cheatingStudents:
-                    initialScores[tag][assignment][student] = 0
-                else:
-                    initialScores[tag][assignment][student] += resubmissionScores[tag][assignment][student]
+                    print("Student " + student + " cheated on " + assignment + " for " + tag)
     return initialScores
 
 def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefix=True):
@@ -218,8 +230,17 @@ if __name__ == "__main__":
                         uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion])
                     else:
                         uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False)
-
-
+    elif command == 'R':
+        print("Resubmission")
+        initialAssignment = input("Please input the name of the initial assignment: ")
+        resubmissionAssignment = input("Please input the name of the resubmission assignment (default is initial assignemnt name with _Resubmission added to the end: ")
+        if resubmissionAssignment == '':
+            resubmissionAssignment = initialAssignment + "_Resubmission"
+        gradescopeColumn = input("Please enter the name of the column containing the student emails (defaults to Email): ")
+        if gradescopeColumn == '':
+            gradescopeColumn = 'Email'
+        scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
+        print(scores)
 
     #AS OF YET UNTESTED (NEED TO CHANGE IT TO USE CANVAS API AS WELL, ONCE WE HAVE TESTING DATA)
     # elif command == 'r':
