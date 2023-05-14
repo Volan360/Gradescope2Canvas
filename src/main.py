@@ -208,7 +208,6 @@ if __name__ == "__main__":
         print("Finished writing course info to courseInfo.txt, located in the same folder as this program (might show up after you close this window)")
         print("Please copy and paste the information into the config.yaml file, indented under the CANVAS_API section")
         print("Please also make sure that all assignments that aren't connected to rubrics (everything that isn't a bundle) are removed from the config file")
-        input("Press enter to exit")
     elif command == 'G':
         courseId = CONFIG['CANVAS_API']['COURSE_ID']
         course = canvas.get_course(courseId)
