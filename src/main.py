@@ -1,5 +1,7 @@
 import os
 import csv
+
+import canvasapi.util
 from canvasapi import Canvas
 import yaml
 
@@ -83,7 +85,8 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
         csvOutput.close()
 
 #CHANGE THIS FUNCTION TO USE THE CANVAS API INSTEAD OF THE CSV FILES
-def removeCanvasAssignment(assignment):
+def removeCanvasAssignmentLocal(assignment):
+    assignment = "Points: " + assignment
     for rubricScoresFile in os.listdir(CANVAS_FILE_PATH):
         try:
             csvInput = open(CANVAS_FILE_PATH + rubricScoresFile, 'r')
@@ -94,16 +97,23 @@ def removeCanvasAssignment(assignment):
         csvReader = csv.DictReader(csvInput)
         if assignment not in csvReader.fieldnames:
             print("Could not find the assignment " + assignment + " in the file " + rubricScoresFile)
-            print("Canceling assignment deletion, please delete all files in the Output folder and try again")
-            return
+            pass
         fieldNames = []
+        skipFields = []
         for field in csvReader.fieldnames:
-            if field != assignment:
+            if "Posted Score" in field or "Attempt Number" in field or "Rating: " in field or field == assignment:
+                skipFields.append(field)
+                pass
+            else:
                 fieldNames.append(field)
         csvWriter = csv.DictWriter(csvOutput, fieldnames=fieldNames)
         csvWriter.writeheader()
         for row in csvReader:
-            row.pop(assignment)
+            try:
+                for field in skipFields:
+                    row.pop(field)
+            except KeyError:
+                pass
             csvWriter.writerow(row)
         csvInput.close()
         csvOutput.close()
@@ -217,7 +227,7 @@ if __name__ == "__main__":
                 canvasColumn = 'Student ID'
             for assignment in gradescopeAssignmentList:
                 scores = getGradescopeScores(assignment, gradescopeColumn)
-                updateCanvasScores(canvasColumn, scores)
+                updateCanvasScores(scores, canvasColumn)
         else:
             emailOrSID = input("Email or SID (E/S): ")
             while emailOrSID != 'E' and emailOrSID != 'S':
@@ -247,28 +257,49 @@ if __name__ == "__main__":
     elif command == 'R':
         courseId = CONFIG['CANVAS_API']['COURSE_ID']
         course = canvas.get_course(courseId)
+        localOrUpload = input("Save CSV files locally or upload directly to Canvas? (L/U): ")
+        while localOrUpload != 'L' and localOrUpload != 'U':
+            localOrUpload = input("Invalid command, please enter L for local or U for upload: ")
         initialAssignment = input("Please input the name of the initial assignment: ")
         resubmissionAssignment = input("Please input the name of the resubmission assignment (default is initial assignemnt name with _Resubmission added to the end: ")
         if resubmissionAssignment == '':
             resubmissionAssignment = initialAssignment + "_Resubmission"
-        gradescopeColumn = input("Please enter the name of the column containing the student emails (defaults to Email): ")
-        if gradescopeColumn == '':
-            gradescopeColumn = 'Email'
+        if localOrUpload == 'L':
+            gradescopeColumn = input("Please enter the name of the column containing the student SID (defaults to SID): ")
+            if gradescopeColumn == '':
+                gradescopeColumn = 'SID'
+            canvasColumn = input("Please enter the name of the column containing the student SID (defaults to Student ID): ")
+            if canvasColumn == '':
+                canvasColumn = 'Student ID'
+            scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
+            updateCanvasScores(scores, canvasColumn)
 
-        scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
-        for bundle in scores:
-            canvasAssignment = course.get_assignment(CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
-            try:
-                rubric = canvasAssignment.rubric
-            except:
-                print("Could not find rubric for assignment " + bundle)
-                continue
-            for criterion in scores[bundle]:
-                uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion])
+        else:
+            emailOrSID = input("Email or SID (E/S): ")
+            while emailOrSID != 'E' and emailOrSID != 'S':
+                gradescopeColumn = input("Invalid column, please enter E for email or S for SID: ")
+            if emailOrSID == 'E':
+                gradescopeColumn = input("Please enter the name of the column containing the student emails (defaults to Email): ")
+                if gradescopeColumn == '':
+                    gradescopeColumn = 'Email'
+            else:
+                gradescopeColumn = input("Please enter the name of the column containing the student SIDs (defaults to SID): ")
+                if gradescopeColumn == '':
+                    gradescopeColumn = 'SID'
+            scores = getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn)
+            for bundle in scores:
+                canvasAssignment = course.get_assignment(CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
+                try:
+                    rubric = canvasAssignment.rubric
+                except:
+                    print("Could not find rubric for assignment " + bundle)
+                    continue
+                for criterion in scores[bundle]:
+                    uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion])
+    elif command == 'RM':
+        removeColumn = input("Please input the assignment name you would like to remove from the Canvas bundles (must match EXACTLY): ")
+        removeCanvasAssignmentLocal(removeColumn)
+        print("Finished removing assignment " + removeColumn + " from the Canvas bundle, updated CSV files are located in " + OUTPUT_FILE_PATH)
+    input("Press enter to exit")
 
-    #AS OF YET UNTESTED (NEED TO CHANGE IT TO USE CANVAS API AS WELL, ONCE WE HAVE TESTING DATA)
-    #
-    # elif command == 'rm':
-    #     removeColumn = input("Please input the assignment name you would like to remove from the Canvas file: ")
-    #     removeCanvasAssignment(removeColumn)
 
