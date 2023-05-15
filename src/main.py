@@ -1,8 +1,5 @@
 import os
 import csv
-
-import canvasapi.util
-import py2exe
 from canvasapi import Canvas
 import yaml
 
