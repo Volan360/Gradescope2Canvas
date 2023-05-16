@@ -3,7 +3,7 @@ import csv
 from canvasapi import Canvas
 import yaml
 
-with open("../config.yaml", 'r') as stream:
+with open("config.yaml", 'r') as stream:
     CONFIG = yaml.safe_load(stream)
 
 CANVAS_FILE_PATH = CONFIG['CANVAS_FOLDER']
@@ -15,7 +15,7 @@ API_URL = CONFIG['CANVAS_API']['URL']
 def getGradescopeScores(assignment, gradescopeColumn):
     gradeScopeScores = {}
     for question in os.listdir(GRADESCOPE_FILE_PATH + assignment):
-        csvFile = open(GRADESCOPE_FILE_PATH + assignment + '/' + question, 'r')
+        csvFile = open(GRADESCOPE_FILE_PATH + assignment + os.sep + question, 'r')
         csvReader = csv.DictReader(csvFile)
         for row in csvReader:
             if not row[gradescopeColumn] or not row['Tags']:
@@ -110,8 +110,8 @@ def removeCanvasAssignment(assignment):
 def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
     cheatingStudents = []
     for question in os.listdir(GRADESCOPE_FILE_PATH + initialAssignment):
-        initialReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + initialAssignment + '/' + question, 'r'))
-        resubmissionReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + resubmissionAssignment + '/' + question, 'r'))
+        initialReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + initialAssignment + os.sep + question, 'r'))
+        resubmissionReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + resubmissionAssignment + os.sep + question, 'r'))
         initialScores = {}
         resubmissionScores = {}
         for row in initialReader:
