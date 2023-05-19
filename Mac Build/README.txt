@@ -49,15 +49,15 @@ III. Adding a course
             NET_ID_ENDPOINT: login_id
             SID_ENDPOINT: sis_user_id
             KEY: example_key
-            COURSE_ID: 44070000000049233
+            COURSE_ID: example_id
             ASSIGNMENTS:
-              Safety and Format: 44070000001166714
-              Objective or Purpose or Concepts: 44070000001166700
-              Exit Quizzes: 44070000001166680
-              Procedure: 44070000001166705
-              Observations: 44070000001166701
-              Data Analysis: 44070000001166677
-              Argumentation: 44070000001166674
+              Safety and Format: example_id
+              Objective or Purpose or Concepts: example_id
+              Exit Quizzes: example_id
+              Procedure: example_id
+              Observations: example_id
+              Data Analysis: example_id
+              Argumentation: example_id
     9. Please note that the program only supports 1 course at a time, so if you want to add another course, you will have to
        delete the previous course's info from the config.yaml file and repeat the process above
             -Alternatively, create a new config.yaml and a new Gradescope2Canvas.command file for each course,
