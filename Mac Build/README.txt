@@ -1,4 +1,5 @@
 INITIAL SETUP (once at the start of the quarter):
+
 I. Setting up the command file
     1. Copy the absolute path of the Program folder in this directory (drag and drop that folder into the Terminal app)
     2. Open the Gradescope2Canvas.command file in a text editor
