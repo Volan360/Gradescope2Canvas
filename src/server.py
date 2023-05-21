@@ -50,10 +50,10 @@ def courseInfo():
     for course in canvas.get_courses():
         try:
             if course.name == courseName:
-                #print("Course name: ", course.name)
+                print("Course name: ", course.name)
                 yamlInfo += "Course_ID: " + str(course.id) + "\nASSIGNMENTS:\n"
                 for assignment in course.get_assignments():
-                    #print(assignment.name + ": " + str(assignment.id))
+                    print(assignment.name + ": " + str(assignment.id))
                     yamlInfo += "\t" + assignment.name + ": " + str(assignment.id) + "\n"
                 break
         except:
@@ -70,4 +70,4 @@ def localRemove():
 
 if __name__ == '__main__':
     from waitress import serve
-    serve(app, host="127.0.0.1", port=8675309)
+    serve(app, host="127.0.0.1", port=7777)
