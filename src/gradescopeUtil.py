@@ -12,10 +12,10 @@ OUTPUT_FILE_PATH = CONFIG['OUTPUT_FOLDER']
 API_URL = CONFIG['CANVAS_API']['URL']
 
 #Make a function called "Get Course Info" that takes in a course name and returns the course ID, as well as assignment IDs and names
-def getGradescopeScores(assignment, gradescopeColumn):
+def getGradescopeScores(assignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     gradeScopeScores = {}
-    for question in os.listdir(GRADESCOPE_FILE_PATH + assignment):
-        csvFile = open(GRADESCOPE_FILE_PATH + assignment + os.sep + question, 'r')
+    for question in os.listdir(gradescopeFilePath + assignment):
+        csvFile = open(gradescopeFilePath + assignment + os.sep + question, 'r')
         csvReader = csv.DictReader(csvFile)
         for row in csvReader:
             if not row[gradescopeColumn] or not row['Tags']:
@@ -37,14 +37,14 @@ def getGradescopeScores(assignment, gradescopeColumn):
     return gradeScopeScores
 
 #WE MOST LIKELY WON'T NEED THIS FUNCTION ANYMORE, SINCE WE CAN UPLOAD THE GRADESCOPE SCORES TO CANVAS AUTOMATICALLY
-def updateCanvasScores(gradeScopeScores, canvasColumn):
+def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE_PATH, outputFilePath=OUTPUT_FILE_PATH):
     for tag in gradeScopeScores:
         try:
-            csvInput = open(CANVAS_FILE_PATH + "Rubric Scores " + tag + ".csv", 'r')
+            csvInput = open(canvasFilePath + "Rubric Scores " + tag + ".csv", 'r')
         except:
-            print("Could not find the file: " + CANVAS_FILE_PATH + "Rubric Scores " + tag + ".csv")
+            print("Could not find the file: " + canvasFilePath + "Rubric Scores " + tag + ".csv")
             continue
-        csvOutput = open(OUTPUT_FILE_PATH + "Updated Rubric Scores " + tag + ".csv", 'w', newline='')
+        csvOutput = open(outputFilePath + "Updated Rubric Scores " + tag + ".csv", 'w', newline='')
         csvReader = csv.DictReader(csvInput)
         fieldnames = []
         skipFields = []
@@ -72,7 +72,6 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
         for assignment in gradeScopeScores[tag]:
             for row in csvReader:
                 if int(row[canvasColumn]) in gradeScopeScores[tag][assignment].keys():
-                    #print(row[canvasColumn] + " " + tag + " " + assignment + " " + str(gradeScopeScores[tag][assignment][row[canvasColumn]]))
                     row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][row[canvasColumn]]))
                 else:
                     row["Points: " + assignment] = '0'
@@ -83,15 +82,15 @@ def updateCanvasScores(gradeScopeScores, canvasColumn):
         csvOutput.close()
 
 #CHANGE THIS FUNCTION TO USE THE CANVAS API INSTEAD OF THE CSV FILES
-def removeCanvasAssignmentLocal(assignment):
+def removeCanvasAssignmentLocal(assignment, canvasFilePath=CANVAS_FILE_PATH, outputFilePath=OUTPUT_FILE_PATH):
     assignment = "Points: " + assignment
-    for rubricScoresFile in os.listdir(CANVAS_FILE_PATH):
+    for rubricScoresFile in os.listdir(canvasFilePath):
         try:
-            csvInput = open(CANVAS_FILE_PATH + rubricScoresFile, 'r')
+            csvInput = open(canvasFilePath + rubricScoresFile, 'r')
         except:
-            print("Could not find the file: " + CANVAS_FILE_PATH + rubricScoresFile)
+            print("Could not find the file: " + canvasFilePath + rubricScoresFile)
             continue
-        csvOutput = open(OUTPUT_FILE_PATH + "Updated " + rubricScoresFile, 'w', newline='')
+        csvOutput = open(outputFilePath + "Updated " + rubricScoresFile, 'w', newline='')
         csvReader = csv.DictReader(csvInput)
         if assignment not in csvReader.fieldnames:
             print("Could not find the assignment " + assignment + " in the file " + rubricScoresFile)
@@ -115,11 +114,11 @@ def removeCanvasAssignmentLocal(assignment):
             csvWriter.writerow(row)
         csvInput.close()
         csvOutput.close()
-def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
+def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     cheatingStudents = []
-    for question in os.listdir(GRADESCOPE_FILE_PATH + initialAssignment):
-        initialReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + initialAssignment + os.sep + question, 'r'))
-        resubmissionReader = csv.DictReader(open(GRADESCOPE_FILE_PATH + resubmissionAssignment + os.sep + question, 'r'))
+    for question in os.listdir(gradescopeFilePath + initialAssignment):
+        initialReader = csv.DictReader(open(gradescopeFilePath + initialAssignment + os.sep + question, 'r'))
+        resubmissionReader = csv.DictReader(open(gradescopeFilePath + resubmissionAssignment + os.sep + question, 'r'))
         initialScores = {}
         resubmissionScores = {}
         for row in initialReader:
@@ -149,10 +148,10 @@ def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn):
                 print("Resubmission Score: " + str(resubmissionScores[student][question]))
                 cheatingStudents.append(student)
     return cheatingStudents
-def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn):
-    initialScores = getGradescopeScores(initialAssignment, gradescopeColumn)
-    resubmissionScores = getGradescopeScores(resubmissionAssignment, gradescopeColumn)
-    cheatingStudents = getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn)
+def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
+    initialScores = getGradescopeScores(initialAssignment, gradescopeColumn, gradescopeFilePath)
+    resubmissionScores = getGradescopeScores(resubmissionAssignment, gradescopeColumn, gradescopeFilePath)
+    cheatingStudents = getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath)
     for tag in resubmissionScores:
         for student in resubmissionScores[tag][resubmissionAssignment]:
             if student in cheatingStudents:
@@ -161,7 +160,8 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
                 initialScores[tag][initialAssignment][student] += resubmissionScores[tag][resubmissionAssignment][student]
     return initialScores
 
-def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefix=True):
+def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefix=True,
+                       netIDEnpoint=CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],sidEndpoint=CONFIG['CANVAS_API']['SID_ENDPOINT']):
     criterion_id = ""
     for criterion in assignment.rubric:
         if criterion['description'] == criterionName:
@@ -169,9 +169,9 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
     submissions = assignment.get_submissions(include=['rubric_assessment', 'user'])
     for submission in submissions:
         if byEmailPrefix:
-            matchColumn = submission.user[CONFIG['CANVAS_API']['NET_ID_ENDPOINT']]
+            matchColumn = submission.user[netIDEnpoint]
         else:
-            matchColumn = submission.user[CONFIG['CANVAS_API']['SID_ENDPOINT']]
+            matchColumn = submission.user[sidEndpoint]
         try:
             submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[matchColumn]}})
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)

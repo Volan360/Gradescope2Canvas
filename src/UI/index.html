@@ -11,9 +11,23 @@
         <div id="courseNameBox">
             <h1>Course Name</h1>
             <input type="text" id="courseNameInput">
+            <button id="courseInfoBtn">Get Course Info</button>
+            <div id="courseInfoRes"></div>
         </div>
-        <button id="courseInfoBtn">Get Course Info</button>
-        <div id="courseInfo"></div>
+        <div id="uploadAssignmentsBox">
+            <h1>Upload Assignments</h1>
+            <p>Before uploading, please remember to place all Gradescope assignment folders (containing CSV files with grades) into the Gradescope folder</p>
+            <select id="uploadAssignmentsMatchBy">
+                <option value="None">Select Gradescope Column</option>
+                <option value="Email">Email</option>
+                <option value="SID">SID</option>
+            </select>
+            <p>Column name in Gradescope files (if empty will use "Email" for Email or "SID" for SID)</p>
+            <input type="text" id="uploadAssignmentsColumnName">
+            <button id="uploadAssignmentsBtn">Upload Assignments</button>
+            <div id="uploadAssignmentsRes"></div>
+
+        </div>
     </div>
     <script src="index.js"></script>
 

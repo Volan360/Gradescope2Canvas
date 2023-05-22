@@ -9,9 +9,9 @@ import gradescopeUtil
 with open("config.yaml", 'r') as stream:
     CONFIG = yaml.safe_load(stream)
 
-CANVAS_FILE_PATH = CONFIG['CANVAS_FOLDER']
-GRADESCOPE_FILE_PATH = CONFIG['GRADESCOPE_FOLDER']
-OUTPUT_FILE_PATH = CONFIG['OUTPUT_FOLDER']
+CANVAS_FILE_PATH = CONFIG['CANVAS_FOLDER'] + os.sep
+GRADESCOPE_FILE_PATH = CONFIG['GRADESCOPE_FOLDER'] + os.sep
+OUTPUT_FILE_PATH = CONFIG['OUTPUT_FOLDER']+ os.sep
 API_URL = CONFIG['CANVAS_API']['URL']
 
 apiKey = CONFIG['CANVAS_API']['KEY']
@@ -29,7 +29,33 @@ def index():
 
 @app.route('/uploadGrade')
 def uploadGrade():
-    return
+    returnMsg = ""
+    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    emailOrSID = request.args.get('emailOrSID')
+    gradescopeColumn = request.args.get('gradescopeColumn')
+    for assignment in gradescopeAssignmentList:
+        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
+        for bundle in scores:
+            canvasAssignment = course.get_assignment(CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
+            try:
+                rubric = canvasAssignment.rubric
+                print("Rubric found for assignment: " + canvasAssignment.name)
+                returnMsg += "Rubric found for assignment: " + canvasAssignment.name + "\n"
+            except:
+                print("Rubric not found for assignment: " + canvasAssignment.name)
+                returnMsg += "Rubric not found for assignment: " + canvasAssignment.name + "\n"
+                continue
+            for criterion in scores[bundle]:
+                if emailOrSID == "Email":
+                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
+                                                      CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                else:
+                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
+                                                      CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      CONFIG['CANVAS_API']['SID_ENDPOINT'])
+
+    return returnMsg
 
 @app.route('/localGrade')
 def localGrade():
@@ -70,4 +96,5 @@ def localRemove():
 
 if __name__ == '__main__':
     from waitress import serve
+    print("Now serving on port 7777...")
     serve(app, host="127.0.0.1", port=7777)
