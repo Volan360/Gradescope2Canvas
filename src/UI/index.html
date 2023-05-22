@@ -9,7 +9,8 @@
 <body>
     <div id="app">
         <div id="courseNameBox">
-            <h1>Course Name</h1>
+            <h1>Course Info</h1>
+            <p>Enter the name of the course as it appears in Canvas</p>
             <input type="text" id="courseNameInput">
             <button id="courseInfoBtn">Get Course Info</button>
             <div id="courseInfoRes"></div>
@@ -27,6 +28,18 @@
             <button id="uploadAssignmentsBtn">Upload Assignments</button>
             <div id="uploadAssignmentsRes"></div>
 
+        </div>
+        <div id="localGradesBox">
+            <h1>Output grades to CSV Files</h1>
+            <p>Before outputting, please remember to place all Gradescope assignment folders (containing CSV files with grades) into the Gradescope folder</p>
+            <p>In addition, make sure the assignment(s) to be graded have been added as a criterion to each bundle's rubric on Canvas </p>
+            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder</p>
+            <p>SID Column name in Gradescope files (will default to "SID")</p>
+            <input type="text" id="localAssignmentsGradescopeColumn">
+            <p>SID Column name in Canvas files (will default to "Student ID")</p>
+            <input type="text" id="localAssignmentsCanvasColumn">
+            <button id="localGradesBtn">Output Grades</button>
+            <div id="localGradesRes"></div>
         </div>
     </div>
     <script src="index.js"></script>

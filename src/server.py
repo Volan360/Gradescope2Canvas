@@ -59,7 +59,13 @@ def uploadGrade():
 
 @app.route('/localGrade')
 def localGrade():
-    return
+    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    gradescopeColumn = request.args.get('gradescopeColumn')
+    canvasColumn = request.args.get('canvasColumn')
+    for assignment in gradescopeAssignmentList:
+        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
+        gradescopeUtil.updateCanvasScores(scores, canvasColumn, CANVAS_FILE_PATH, OUTPUT_FILE_PATH)
+    return "Done!"
 
 @app.route('/uploadResubmission')
 def uploadResubmission():

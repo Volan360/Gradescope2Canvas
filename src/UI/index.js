@@ -33,3 +33,31 @@ uploadAssignmentsBtn.addEventListener("click", () => {
         })
 
 })
+
+
+const localGradesBtn = document.getElementById("localGradesBtn")
+const localGradesRes = document.getElementById("localGradesRes")
+const gradescopeColumnInput = document.getElementById("localAssignmentsGradescopeColumn")
+const canvasColumnInput = document.getElementById("localAssignmentsCanvasColumn")
+
+localGradesBtn.addEventListener("click", () => {
+    var gradescopeColumn = ""
+    var canvasColumn = ""
+    if (gradescopeColumnInput.value === "") {
+        gradescopeColumn = "SID"
+    }
+    else {
+        gradescopeColumn = gradescopeColumnInput.value
+    }
+    if (canvasColumnInput.value === "") {
+        canvasColumn = "Student ID"
+    }
+    else {
+        canvasColumn = canvasColumnInput.value
+    }
+    fetch(`http://localhost:${portNumber}/localGrade?gradescopeColumn=${encodeURIComponent(gradescopeColumn)}&canvasColumn=${encodeURIComponent(canvasColumn)}`)
+        .then(res => res.text())
+        .then(res => {
+            localGradesRes.innerHTML = res
+        })
+})
