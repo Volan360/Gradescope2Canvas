@@ -27,7 +27,6 @@
             <input type="text" id="uploadAssignmentsColumnName">
             <button id="uploadAssignmentsBtn">Upload Assignments</button>
             <div id="uploadAssignmentsRes"></div>
-
         </div>
         <div id="localGradesBox">
             <h1>Output grades to CSV Files</h1>
@@ -40,6 +39,45 @@
             <input type="text" id="localAssignmentsCanvasColumn">
             <button id="localGradesBtn">Output Grades</button>
             <div id="localGradesRes"></div>
+        </div>
+        <div id="uploadResubmissionBox">
+            <h1>Upload grades for resubmitted assignments</h1>
+            <p>Before uploading, please remember to place the initial Gradescope assignment and the regraded version into the Gradescope folder</p>
+            <p>Please rename the regraded version to the initial one's name with "_Resubmission" at the end (no quotes)</p>
+            <p>For example, if the initial assignment is named "Assignment 1", the regraded version should be named "Assignment 1_Resubmission"</p>
+            <select id="uploadResubmissionMatchBy">
+                <option value="None">Select Gradescope Column</option>
+                <option value="Email">Email</option>
+                <option value="SID">SID</option>
+            </select>
+            <p>Name of the initial assignment</p>
+            <input type="text" id="uploadResubmissionInitialAssignment">
+            <p>Column name in Gradescope files (if empty will use "Email" for Email or "SID" for SID)</p>
+            <input type="text" id="uploadResubmissionColumnName">
+            <button id="uploadResubmissionBtn">Upload Resubmission</button>
+            <div id="uploadResubmissionRes"></div>
+        </div>
+        <div id="localResubmissionBox">
+            <h1>Output grades for resubmitted assignments to CSV Files</h1>
+            <p>Before outputting, please remember to place the initial Gradescope assignment and the regraded version into the Gradescope folder</p>
+            <p>Please rename the regraded version to the initial one's name with "_Resubmission" at the end (no quotes)</p>
+            <p>For example, if the initial assignment is named "Assignment 1", the regraded version should be named "Assignment 1_Resubmission"</p>
+            <p>SID Column name in Gradescope files (will default to "SID")</p>
+            <input type="text" id="localResubmissionGradescopeColumn">
+            <p>SID Column name in Canvas files (will default to "Student ID")</p>
+            <input type="text" id="localResubmissionCanvasColumn">
+            <p>Name of the initial assignment</p>
+            <input type="text" id="localResubmissionInitialAssignment">
+            <button id="localResubmissionBtn">Output Resubmission Grades</button>
+            <div id="localResubmissionRes"></div>
+        </div>
+        <div id="localRemoveBox">
+            <h1>Remove grades from Canvas CSV files</h1>
+            <p>Please place latest Canvas CSV file for each bundle in the Canvas folder</p>
+            <p>Name of the assignment to remove grades from</p>
+            <input type="text" id="localRemoveAssignment">
+            <button id="localRemoveBtn">Remove Grades</button>
+            <div id="localRemoveRes"></div>
         </div>
     </div>
     <script src="index.js"></script>
