@@ -1,2 +1,3 @@
-cd /example/path/to/Progam/Folder/Containting/Main/And/Config/File
+cd dirname $0
 ./Main
+./UI/index.html

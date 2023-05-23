@@ -13,7 +13,7 @@ courseInfoBtn.addEventListener("click", () => {
             return res.text()
         })
         .then(res => {
-            courseInfo.innerHTML = res
+            courseInfo.innerHTML = res + "<br>" + "Please close the server before editing the config.yaml file"
         })
 })
 

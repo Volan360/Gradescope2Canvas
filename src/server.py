@@ -16,8 +16,6 @@ API_URL = CONFIG['CANVAS_API']['URL']
 
 apiKey = CONFIG['CANVAS_API']['KEY']
 canvas = Canvas(API_URL, apiKey)
-courseId = CONFIG['CANVAS_API']['COURSE_ID']
-course = canvas.get_course(courseId)
 
 
 app = Flask(__name__)
@@ -29,6 +27,8 @@ def index():
 
 @app.route('/uploadGrade')
 def uploadGrade():
+    courseId = CONFIG['CANVAS_API']['COURSE_ID']
+    course = canvas.get_course(courseId)
     print("Uploading scores...")
     returnMsg = ""
     gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
@@ -56,7 +56,7 @@ def uploadGrade():
                                                       CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
                                                       CONFIG['CANVAS_API']['SID_ENDPOINT'])
 
-    return returnMsg
+    return "Done!"
 
 @app.route('/localGrade')
 def localGrade():
@@ -71,6 +71,8 @@ def localGrade():
 
 @app.route('/uploadResubmission')
 def uploadResubmission():
+    courseId = CONFIG['CANVAS_API']['COURSE_ID']
+    course = canvas.get_course(courseId)
     print("Uploading resubmission scores...")
     initialAssignment = request.args.get('initialAssignment')
     emailOrSID = request.args.get('emailOrSID')
@@ -127,7 +129,7 @@ def courseInfo():
     yamlFile = open("courseInfo.txt", "w")
     yamlFile.write(yamlInfo)
     yamlFile.close()
-    return yamlInfo
+    return "Done!"
 
 @app.route('/localRemove')
 def localRemove():
@@ -140,4 +142,8 @@ def localRemove():
 if __name__ == '__main__':
     from waitress import serve
     print("Now serving on port 7777...")
-    serve(app, host="127.0.0.1", port=7777)
+    try:
+        serve(app, host="127.0.0.1", port=7777)
+    except Exception as e:
+        print(e)
+        input("Error: Press enter to exit.")
