@@ -7,5 +7,5 @@ CANVAS_API:
   URL: https://canvas.instructure.com
   NET_ID_ENDPOINT: login_id
   SID_ENDPOINT: sis_user_id
-  KEY: 4407~yui3x9P19sA3xqJhU3yLDqqHwdzF94dXk0jPExSY3LCOhhzTMbhBHKXth9wIODA9
+  KEY: example_key
 
