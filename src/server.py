@@ -1,22 +1,32 @@
-from flask import Flask, render_template, request
-import urllib.parse
+from flask import Flask, request
 import os
 from flask_cors import CORS
 import yaml
 from canvasapi import Canvas
 import gradescopeUtil
 
-with open("config.yaml", 'r') as stream:
-    CONFIG = yaml.safe_load(stream)
+class CanvasServer:
+    def __init__(self):
+        self.CANVAS = None
+        self.CONFIG = None
+        self.CANVAS_FILE_PATH = None
+        self.GRADESCOPE_FILE_PATH = None
+        self.OUTPUT_FILE_PATH = None
+        self.API_URL = None
+        self.API_KEY = None
+    def loadConfig(self):
+        with open("config.yaml", 'r') as stream:
+            self.CONFIG = yaml.safe_load(stream)
 
-CANVAS_FILE_PATH = CONFIG['CANVAS_FOLDER'] + os.sep
-GRADESCOPE_FILE_PATH = CONFIG['GRADESCOPE_FOLDER'] + os.sep
-OUTPUT_FILE_PATH = CONFIG['OUTPUT_FOLDER']+ os.sep
-API_URL = CONFIG['CANVAS_API']['URL']
+        self.CANVAS_FILE_PATH = self.CONFIG['CANVAS_FOLDER'] + os.sep
+        self.GRADESCOPE_FILE_PATH = self.CONFIG['GRADESCOPE_FOLDER'] + os.sep
+        self.OUTPUT_FILE_PATH = self.CONFIG['OUTPUT_FOLDER']+ os.sep
+        self.API_URL = self.CONFIG['CANVAS_API']['URL']
 
-apiKey = CONFIG['CANVAS_API']['KEY']
-canvas = Canvas(API_URL, apiKey)
+        self.API_KEY = self.CONFIG['CANVAS_API']['KEY']
+        self.CANVAS = Canvas(self.API_URL, self.API_KEY)
 
+canvasServer = CanvasServer()
 
 app = Flask(__name__)
 CORS(app)
@@ -27,17 +37,22 @@ def index():
 
 @app.route('/uploadGrade')
 def uploadGrade():
-    courseId = CONFIG['CANVAS_API']['COURSE_ID']
-    course = canvas.get_course(courseId)
+    canvasServer.loadConfig()
+    courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
+    course = canvasServer.CANVAS.get_course(courseId)
     print("Uploading scores...")
     returnMsg = ""
-    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    gradescopeAssignmentList = os.listdir(canvasServer.GRADESCOPE_FILE_PATH)
     emailOrSID = request.args.get('emailOrSID')
     gradescopeColumn = request.args.get('gradescopeColumn')
     for assignment in gradescopeAssignmentList:
-        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
+        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
         for bundle in scores:
-            canvasAssignment = course.get_assignment(CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
+            if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
+                print("Assignment " + bundle + " not found in config.yaml (meaning it has no rubric on canvas)")
+                returnMsg += "Assignment " + bundle + " not found in config.yaml (meaning it has no rubric on canvas)\n"
+                continue
+            canvasAssignment = course.get_assignment(canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
             try:
                 rubric = canvasAssignment.rubric
                 print("Rubric found for assignment: " + canvasAssignment.name)
@@ -49,38 +64,43 @@ def uploadGrade():
             for criterion in scores[bundle]:
                 if emailOrSID == "Email":
                     gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
-                                                      CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                      CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
                 else:
                     gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
-                                                      CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                      CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
 
     return "Done!"
 
 @app.route('/localGrade')
 def localGrade():
+    canvasServer.loadConfig()
     print("Outputting scores to local CSV files...")
-    gradescopeAssignmentList = os.listdir(GRADESCOPE_FILE_PATH)
+    gradescopeAssignmentList = os.listdir(canvasServer.GRADESCOPE_FILE_PATH)
     gradescopeColumn = request.args.get('gradescopeColumn')
     canvasColumn = request.args.get('canvasColumn')
     for assignment in gradescopeAssignmentList:
-        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
-        gradescopeUtil.updateCanvasScores(scores, canvasColumn, CANVAS_FILE_PATH, OUTPUT_FILE_PATH)
+        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
     return "Done!"
 
 @app.route('/uploadResubmission')
 def uploadResubmission():
-    courseId = CONFIG['CANVAS_API']['COURSE_ID']
-    course = canvas.get_course(courseId)
+    canvasServer.loadConfig()
+    courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
+    course = canvasServer.CANVAS.get_course(courseId)
     print("Uploading resubmission scores...")
     initialAssignment = request.args.get('initialAssignment')
     emailOrSID = request.args.get('emailOrSID')
     gradescopeColumn = request.args.get('gradescopeColumn')
     resubmissionAssignment = initialAssignment + "_Resubmission"
-    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
+    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
     for bundle in scores:
-        canvasAssignment = course.get_assignment(CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
+        if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
+            print("Assignment " + bundle + " not found in config.yaml")
+            continue
+        canvasAssignment = course.get_assignment(canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
         try:
             rubric = canvasAssignment.rubric
             print("Rubric found for assignment: " + canvasAssignment.name)
@@ -90,52 +110,65 @@ def uploadResubmission():
         for criterion in scores[bundle]:
             if emailOrSID == "Email":
                 gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
-                                                  CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                  CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                                                  canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                  canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
             else:
                 gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
-                                                  CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                  CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                                                  canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                  canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
 
     return "Done!"
 
 @app.route('/localResubmission')
 def localResubmission():
+    canvasServer.loadConfig()
     print("Outputting resubmission scores to local CSV files...")
     initialAssignment = request.args.get('initialAssignment')
     resubmissionAssignment = initialAssignment + "_Resubmission"
     gradescopeColumn = request.args.get('gradescopeColumn')
     canvasColumn = request.args.get('canvasColumn')
-    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, GRADESCOPE_FILE_PATH)
-    gradescopeUtil.updateCanvasScores(scores, canvasColumn, CANVAS_FILE_PATH, OUTPUT_FILE_PATH)
+    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+    gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
     return "Done!"
 
 @app.route('/courseInfo')
 def courseInfo():
+    canvasServer.loadConfig()
     print("Getting course info...")
     courseName = request.args.get('courseName')
     yamlInfo = ""
-    for course in canvas.get_courses():
+    for course in canvasServer.CANVAS.get_courses():
         try:
             if course.name == courseName:
                 print("Course name: ", course.name)
-                yamlInfo += "Course_ID: " + str(course.id) + "\nASSIGNMENTS:\n"
+                #tab indentation is forbidden in yaml files
+                yamlInfo += "  COURSE_ID: " + str(course.id) + "\n  ASSIGNMENTS:\n"
                 for assignment in course.get_assignments():
-                    print(assignment.name + ": " + str(assignment.id))
-                    yamlInfo += "\t" + assignment.name + ": " + str(assignment.id) + "\n"
+                    if assignment.rubric:
+                        print(assignment.name + ": " + str(assignment.id))
+                        yamlInfo += "    " + assignment.name + ": " + str(assignment.id) + "\n"
                 break
         except:
             continue
-    yamlFile = open("courseInfo.txt", "w")
-    yamlFile.write(yamlInfo)
-    yamlFile.close()
+    with open("config.yaml", "r") as f:
+        lines = f.readlines()
+    #delete the old file
+    os.remove("config.yaml")
+    with open("config.yaml", "w") as f:
+        for line in lines:
+            if "KEY:" in line:
+                f.write(line)
+                break
+            f.write(line)
+        f.write(yamlInfo)
     return "Done!"
 
 @app.route('/localRemove')
 def localRemove():
+    canvasServer.loadConfig()
     print("Removing assignment from local CSV files...")
     removeColumn = request.args.get('removeColumn')
-    gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, CANVAS_FILE_PATH, OUTPUT_FILE_PATH)
+    gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
     return "Done!"
 
 
