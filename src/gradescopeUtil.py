@@ -72,7 +72,7 @@ def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE
         for assignment in gradeScopeScores[tag]:
             for row in csvReader:
                 if int(row[canvasColumn]) in gradeScopeScores[tag][assignment].keys():
-                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][row[canvasColumn]]))
+                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][int(row[canvasColumn])]))
                 else:
                     row["Points: " + assignment] = '0'
                 for field in skipFields:
