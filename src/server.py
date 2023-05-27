@@ -160,7 +160,7 @@ def courseInfo():
                 f.write(line)
                 break
             f.write(line)
-        f.write(yamlInfo)
+        f.write("\n" + yamlInfo)
     return "Done!"
 
 @app.route('/localRemove')
