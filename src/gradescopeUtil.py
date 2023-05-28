@@ -15,7 +15,7 @@ API_URL = CONFIG['CANVAS_API']['URL']
 def getGradescopeScores(assignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     gradeScopeScores = {}
     for question in os.listdir(gradescopeFilePath + assignment):
-        csvFile = open(gradescopeFilePath + assignment + os.sep + question, 'r')
+        csvFile = open(gradescopeFilePath + assignment + os.sep + question, 'r', encoding='utf-8-sig')
         csvReader = csv.DictReader(csvFile)
         for row in csvReader:
             if not row[gradescopeColumn] or not row['Tags']:
@@ -40,7 +40,7 @@ def getGradescopeScores(assignment, gradescopeColumn, gradescopeFilePath=GRADESC
 def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE_PATH, outputFilePath=OUTPUT_FILE_PATH):
     for tag in gradeScopeScores:
         try:
-            csvInput = open(canvasFilePath + "Rubric Scores " + tag + ".csv", 'r')
+            csvInput = open(canvasFilePath + "Rubric Scores " + tag + ".csv", 'r', encoding='utf-8-sig')
         except:
             print("Could not find the file: " + canvasFilePath + "Rubric Scores " + tag + ".csv")
             continue
@@ -72,7 +72,7 @@ def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE
         for assignment in gradeScopeScores[tag]:
             for row in csvReader:
                 if int(row[canvasColumn]) in gradeScopeScores[tag][assignment].keys():
-                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][row[canvasColumn]]))
+                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][int(row[canvasColumn])]))
                 else:
                     row["Points: " + assignment] = '0'
                 for field in skipFields:

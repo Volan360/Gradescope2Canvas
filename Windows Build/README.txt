@@ -11,24 +11,10 @@ II.Setting up the basic config.yaml file
     8. Save the file
 
 III. Adding a course
-    1. Open the config.yaml file in a text editor
-    2. If there are any lines under the KEY field in CANVAS_API, delete them
-        -Config.yaml should now look something like this (with actual values)
-        CANVAS_FOLDER: Canvas
-        GRADESCOPE_FOLDER: Gradescope
-        OUTPUT_FOLDER: Output
-        CANVAS_API:
-          URL: https://canvas.instructure.com
-          NET_ID_ENDPOINT: login_id
-          SID_ENDPOINT: sis_user_id
-          KEY: example_key
-    3. Save the file
-    4. Double-Click the Gradescope2Canvas.bat file to run the program
-    5. Thes should open up a website page. Find the Course Info section
-    6. Type the name of the class you want to add and click "Get Course Info" (exactly as it appears in Canvas)
-    7. This will output a courseInfo.txt file
-    8. Open the courseInfo.txt file in a text editor, delete all assignments that aren't bundles
-    8. Copy-paste the contents of the courseInfo.txt file into the config.yaml file, underneath the KEY field, like so:
+    1. Double-Click the Gradescope2Canvas.bat file to run the program
+    2. Thes should open up a website page. Find the Course Info section
+    3. Type the name of the class you want to add and click "Get Course Info" (exactly as it appears in Canvas)
+    4. Your config.yaml file should now look something like this (only assignments with rubrics should be added):
           CANVAS_FOLDER: Canvas
           GRADESCOPE_FOLDER: Gradescope
           OUTPUT_FOLDER: Output
@@ -46,7 +32,7 @@ III. Adding a course
               Observations: example_id
               Data Analysis: example_id
               Argumentation: example_id
-    9. Please note that the program only supports 1 course at a time, so if you want to add another course, you will have to
+    5. Please note that the program only supports 1 course at a time, so if you want to add another course, you will have to
        delete the previous course's info from the config.yaml file and repeat the process above
             -Alternatively, create a new config.yaml and a new Gradescope2Canvas.bat file for each course,
              changing the directory in the first line of the Gradescope2Canvas.bat file to the directory of the
