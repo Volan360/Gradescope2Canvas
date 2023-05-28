@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>GradeScope2Canvas</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index_nice.css">
     <title>Test</title>
 </head>
 <body>
@@ -32,7 +32,7 @@
             <h1>Output grades to CSV Files</h1>
             <p>Before outputting, please remember to place all Gradescope assignment folders (containing CSV files with grades) into the Gradescope folder</p>
             <p>In addition, make sure the assignment(s) to be graded have been added as a criterion to each bundle's rubric on Canvas </p>
-            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder</p>
+            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
             <p>SID Column name in Gradescope files (will default to "SID")</p>
             <input type="text" id="localAssignmentsGradescopeColumn">
             <p>SID Column name in Canvas files (will default to "Student ID")</p>
@@ -62,6 +62,7 @@
             <p>Before outputting, please remember to place the initial Gradescope assignment and the regraded version into the Gradescope folder</p>
             <p>Please rename the regraded version to the initial one's name with "_Resubmission" at the end (no quotes)</p>
             <p>For example, if the initial assignment is named "Assignment 1", the regraded version should be named "Assignment 1_Resubmission"</p>
+            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
             <p>SID Column name in Gradescope files (will default to "SID")</p>
             <input type="text" id="localResubmissionGradescopeColumn">
             <p>SID Column name in Canvas files (will default to "Student ID")</p>
@@ -73,7 +74,7 @@
         </div>
         <div id="localRemoveBox">
             <h1>Remove grades from Canvas CSV files</h1>
-            <p>Please place latest Canvas CSV file for each bundle in the Canvas folder</p>
+            <p>Please place latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
             <p>Name of the assignment to remove grades from</p>
             <input type="text" id="localRemoveAssignment">
             <button id="localRemoveBtn">Remove Grades</button>
