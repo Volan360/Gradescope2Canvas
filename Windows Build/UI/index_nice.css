@@ -71,6 +71,22 @@ html,body {
     transition: 0.5s;
 }
 
+.active{
+    background: #4285F4;
+    border: darkblue 3px solid;
+    box-shadow: none;
+    transition: 0.5s;
+    cursor: pointer;
+}
+.active .svgBg{
+    fill: white;
+    transition: 0.5s;
+}
+.active .svgShape{
+    fill: #4285F4;
+    transition: 0.5s;
+}
+
 .box {
     background: lightgrey;
     display: flex;
@@ -93,7 +109,7 @@ html,body {
     height: 50%;
 }
 
-.infoScreen {
+.infoScreens {
     background: white;
     border-radius: 8px;
     width: 90%;
@@ -102,4 +118,8 @@ html,body {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+
+.hidden {
+    display: none;
 }
