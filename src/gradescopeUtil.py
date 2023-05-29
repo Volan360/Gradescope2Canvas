@@ -55,24 +55,20 @@ def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE
             fieldnames.append(field)
         for assignment in gradeScopeScores[tag]:
             if "Points: " + assignment not in fieldnames:
-                confirmation = input("Would you like to add the assignment " + assignment + " to the Canvas file for " + tag +"? (y/n): ")
-                if confirmation == 'y':
-                    print("Ok, please make sure the assignment " + assignment + " is added to the Canvas rubric for " + tag)
-                    fieldnames.append("Points: " + assignment)
-                else:
-                    print("Canceling grade conversion, please delete all files in the Output folder and try again")
-                    return
+                fieldnames.append("Points: " + assignment)
             else:
-                confirmation = input("The assignment " + assignment + " already exists in the Canvas file for " + tag + ", would you like to modify it? (y/n) ")
-                if confirmation == 'n':
-                    print("Canceling grade conversion, please delete all files in the Output folder and try again")
-                    return
+                return
         csvWriter = csv.DictWriter(csvOutput, fieldnames=fieldnames)
         csvWriter.writeheader()
         for assignment in gradeScopeScores[tag]:
             for row in csvReader:
-                if int(row[canvasColumn]) in gradeScopeScores[tag][assignment].keys():
-                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][int(row[canvasColumn])]))
+                try:
+                    sid = int(row[canvasColumn])
+                except ValueError:
+                    print("Could not convert " + row[canvasColumn] + " to an integer")
+                    continue
+                if sid in gradeScopeScores[tag][assignment].keys():
+                    row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][sid]))
                 else:
                     row["Points: " + assignment] = '0'
                 for field in skipFields:
