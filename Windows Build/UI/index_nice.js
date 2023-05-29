@@ -44,6 +44,22 @@ regradeBtn.addEventListener("click", () => {
     }
 })
 
+courseSetupBtn = document.getElementById("courseSetupBtn");
+courseSetupScreen = document.getElementById("courseSetupScreen");
+courseSetupBtn.addEventListener("click", () => {
+    //add active class if not already there
+    hideAllInfoScreen();
+    courseSetupScreen.classList.remove("hidden");
+})
+
+removeBtn = document.getElementById("removeBtn");
+removeScreen = document.getElementById("removeScreen");
+removeBtn.addEventListener("click", () => {
+    //add active class if not already there
+    hideAllInfoScreen();
+    removeScreen.classList.remove("hidden");
+})
+
 
 function hideAllInfoScreen() {
     let infoScreenClass = document.getElementsByClassName("infoScreen");

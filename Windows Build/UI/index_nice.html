@@ -13,7 +13,6 @@
             <img src="assets/Logo.png">
         </div>
         <div class="main">
-
             <div class="selectionBoxes">
                 <div class="box">
                     <div class="btn" id="uploadBtn">
@@ -66,24 +65,114 @@
             <div class="infoScreenBg">
                 <div class="infoScreens">
                     <div class="infoScreen hidden" id="uploadGradeScreen">
-                        <h1>Upload</h1>
+                        <h1>Upload Assignments</h1>
+                        <div class="form__group field">
+                            <select class="form__field" id="uploadGradeColumnSelect">
+                                <option value="None">Select Gradescope Column</option>
+                                <option value="Email">Email</option>
+                                <option value="SID">SID</option>
+                            </select>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="SID or Email" name="uploadGradeColumnName" id='uploadGradeColumnName' required />
+                                <label for="uploadGradeColumnName" class="form__label">Column Name in Gradescope CSVs</label>
+                            </div>
+                            <div class="submitBtn" id="uploadGradeSubmitBtn">
+                                <p>Upload Assignments</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="infoScreen hidden" id="uploadRegradeScreen">
                         <h1>Upload Regrade</h1>
+                        <div class="form__group field">
+                            <select class="form__field" id="uploadResubmissionColumnSelect">
+                                <option value="None">Select Gradescope Column</option>
+                                <option value="Email">Email</option>
+                                <option value="SID">SID</option>
+                            </select>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="SID or Email" name="uploadResubmissionGradescopeColumn" id='uploadResubmissionGradescopeColumn' required />
+                                <label for="uploadResubmissionGradescopeColumn" class="form__label">Column Name in Gradescope CSVs</label>
+                            </div>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="Example Name" name="uploadResubmissionInitialAssignment" id='uploadResubmissionInitialAssignment' required />
+                                <label for="uploadResubmissionInitialAssignment" class="form__label">Initial Assignment Name</label>
+                            </div>
+                            <div class="submitBtn" id="uploadResubmissionSubmitBtn">
+                                <p>Upload Regrade</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="infoScreen hidden" id="convertGradeScreen">
-                        <h1>Convert</h1>
+                        <h1>Convert Assignments</h1>
+                        <div class="form__group field">
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="SID" name="convertGradeGradescopeColumn" id='convertGradeGradescopeColumn' required />
+                                <label for="convertGradeGradescopeColumn" class="form__label">Gradescope SID Column</label>
+                            </div>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="Student ID" name="convertGradeCanvasColumn" id='convertGradeCanvasColumn' required />
+                                <label for="convertGradeCanvasColumn" class="form__label">Canvas SID Column</label>
+                            </div>
+                            <div class="submitBtn" id="convertGradeSubmitBtn">
+                                <p>Convert Assignments</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="infoScreen hidden" id="convertRegradeScreen">
                         <h1>Convert Regrade</h1>
+                        <div class="form__group field">
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="SID" name="convertResubmissionGradescopeColumn" id='convertResubmissionGradescopeColumn' required />
+                                <label for="convertResubmissionGradescopeColumn" class="form__label">Gradescope SID Column</label>
+                            </div>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="Student ID" name="convertResubmissionCanvasColumn" id='convertResubmissionCanvasColumn' required />
+                                <label for="convertResubmissionCanvasColumn" class="form__label">Canvas SID Column</label>
+                            </div>
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="Example Name" name="convertResubmissionInitialAssignment" id='convertResubmissionInitialAssignment' required />
+                                <label for="convertResubmissionInitialAssignment" class="form__label">Initial Assignment Name</label>
+                            </div>
+                            <div class="submitBtn" id="convertResubmissionSubmitBtn">
+                                <p>Convert Regrade</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="infoScreen hidden" id="helpScreen">
                         <h1>Help</h1>
                     </div>
+                    <div class="infoScreen hidden" id="removeScreen">
+                        <h1>Remove</h1>
+                        <div class="form__group field">
+                            <div class="form__group field">
+                                <input type="input" class="form__field" placeholder="Example Name" name="removeCanvasColumnName" id='removeCanvasColumnName' required />
+                                <label for="removeCanvasColumnName" class="form__label">Name of Assignment</label>
+                            </div>
+                            <div class="submitBtn" id="removeSubmitBtn">
+                                <p>Remove from Canvas CSVs</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="infoScreen hidden" id="courseSetupScreen">
+                        <h1>Course Setup</h1>
+                        <div class="form__group field">
+                            <input type="input" class="form__field" placeholder="Example Course" name="courseSetupInput" id='courseSetupInput' required />
+                            <label for="courseSetupInput" class="form__label">Course Name</label>
+                            <div class="submitBtn" id="courseSetupSubmitBtn">
+                                <p>Set Course Info</p>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+            <div class="box" id="courseSetupBox">
+                <div class="btn" id="courseSetupBtn">
+                    <p>Course Setup</p>
+                </div>
+                <div class="btn" id="removeBtn">
+                    <p>Remove</p>
                 </div>
             </div>
-
-        </div>
     </div>
     <script src="index_nice.js"></script>
 </body>
