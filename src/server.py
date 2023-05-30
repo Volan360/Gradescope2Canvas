@@ -37,10 +37,10 @@ def index():
 
 @app.route('/uploadGrade')
 def uploadGrade():
+    print("Uploading scores...")
     canvasServer.loadConfig()
     courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
     course = canvasServer.CANVAS.get_course(courseId)
-    print("Uploading scores...")
     returnMsg = ""
     gradescopeAssignmentList = os.listdir(canvasServer.GRADESCOPE_FILE_PATH)
     emailOrSID = request.args.get('emailOrSID')
@@ -75,8 +75,8 @@ def uploadGrade():
 
 @app.route('/localGrade')
 def localGrade():
-    canvasServer.loadConfig()
     print("Outputting scores to local CSV files...")
+    canvasServer.loadConfig()
     gradescopeAssignmentList = os.listdir(canvasServer.GRADESCOPE_FILE_PATH)
     gradescopeColumn = request.args.get('gradescopeColumn')
     canvasColumn = request.args.get('canvasColumn')
@@ -87,10 +87,10 @@ def localGrade():
 
 @app.route('/uploadResubmission')
 def uploadResubmission():
+    print("Uploading resubmission scores...")
     canvasServer.loadConfig()
     courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
     course = canvasServer.CANVAS.get_course(courseId)
-    print("Uploading resubmission scores...")
     initialAssignment = request.args.get('initialAssignment')
     emailOrSID = request.args.get('emailOrSID')
     gradescopeColumn = request.args.get('gradescopeColumn')
@@ -121,8 +121,8 @@ def uploadResubmission():
 
 @app.route('/localResubmission')
 def localResubmission():
-    canvasServer.loadConfig()
     print("Outputting resubmission scores to local CSV files...")
+    canvasServer.loadConfig()
     initialAssignment = request.args.get('initialAssignment')
     resubmissionAssignment = initialAssignment + "_Resubmission"
     gradescopeColumn = request.args.get('gradescopeColumn')
@@ -133,8 +133,8 @@ def localResubmission():
 
 @app.route('/courseInfo')
 def courseInfo():
-    canvasServer.loadConfig()
     print("Getting course info...")
+    canvasServer.loadConfig()
     courseName = request.args.get('courseName')
     yamlInfo = ""
     for course in canvasServer.CANVAS.get_courses():
@@ -165,8 +165,8 @@ def courseInfo():
 
 @app.route('/localRemove')
 def localRemove():
-    canvasServer.loadConfig()
     print("Removing assignment from local CSV files...")
+    canvasServer.loadConfig()
     removeColumn = request.args.get('removeColumn')
     gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
     return "Done!"

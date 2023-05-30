@@ -1,87 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GradeScope2Canvas</title>
-    <link rel="stylesheet" href="index_nice.css">
-    <title>Test</title>
-</head>
-<body>
-    <div id="app">
-        <div id="courseNameBox">
-            <h1>Course Info</h1>
-            <p>Enter the name of the course as it appears in Canvas</p>
-            <input type="text" id="courseNameInput">
-            <button id="courseInfoBtn">Get Course Info</button>
-            <div id="courseInfoRes"></div>
-        </div>
-        <div id="uploadAssignmentsBox">
-            <h1>Upload Assignments</h1>
-            <p>Before uploading, please remember to place all Gradescope assignment folders (containing CSV files with grades) into the Gradescope folder</p>
-            <select id="uploadAssignmentsMatchBy">
-                <option value="None">Select Gradescope Column</option>
-                <option value="Email">Email</option>
-                <option value="SID">SID</option>
-            </select>
-            <p>Column name in Gradescope files (if empty will use "Email" for Email or "SID" for SID)</p>
-            <input type="text" id="uploadAssignmentsColumnName">
-            <button id="uploadAssignmentsBtn">Upload Assignments</button>
-            <div id="uploadAssignmentsRes"></div>
-        </div>
-        <div id="localGradesBox">
-            <h1>Output grades to CSV Files</h1>
-            <p>Before outputting, please remember to place all Gradescope assignment folders (containing CSV files with grades) into the Gradescope folder</p>
-            <p>In addition, make sure the assignment(s) to be graded have been added as a criterion to each bundle's rubric on Canvas </p>
-            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
-            <p>SID Column name in Gradescope files (will default to "SID")</p>
-            <input type="text" id="localAssignmentsGradescopeColumn">
-            <p>SID Column name in Canvas files (will default to "Student ID")</p>
-            <input type="text" id="localAssignmentsCanvasColumn">
-            <button id="localGradesBtn">Output Grades</button>
-            <div id="localGradesRes"></div>
-        </div>
-        <div id="uploadResubmissionBox">
-            <h1>Upload grades for resubmitted assignments</h1>
-            <p>Before uploading, please remember to place the initial Gradescope assignment and the regraded version into the Gradescope folder</p>
-            <p>Please rename the regraded version to the initial one's name with "_Resubmission" at the end (no quotes)</p>
-            <p>For example, if the initial assignment is named "Assignment 1", the regraded version should be named "Assignment 1_Resubmission"</p>
-            <select id="uploadResubmissionMatchBy">
-                <option value="None">Select Gradescope Column</option>
-                <option value="Email">Email</option>
-                <option value="SID">SID</option>
-            </select>
-            <p>Name of the initial assignment</p>
-            <input type="text" id="uploadResubmissionInitialAssignment">
-            <p>Column name in Gradescope files (if empty will use "Email" for Email or "SID" for SID)</p>
-            <input type="text" id="uploadResubmissionColumnName">
-            <button id="uploadResubmissionBtn">Upload Resubmission</button>
-            <div id="uploadResubmissionRes"></div>
-        </div>
-        <div id="localResubmissionBox">
-            <h1>Output grades for resubmitted assignments to CSV Files</h1>
-            <p>Before outputting, please remember to place the initial Gradescope assignment and the regraded version into the Gradescope folder</p>
-            <p>Please rename the regraded version to the initial one's name with "_Resubmission" at the end (no quotes)</p>
-            <p>For example, if the initial assignment is named "Assignment 1", the regraded version should be named "Assignment 1_Resubmission"</p>
-            <p>Finally, please place the latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
-            <p>SID Column name in Gradescope files (will default to "SID")</p>
-            <input type="text" id="localResubmissionGradescopeColumn">
-            <p>SID Column name in Canvas files (will default to "Student ID")</p>
-            <input type="text" id="localResubmissionCanvasColumn">
-            <p>Name of the initial assignment</p>
-            <input type="text" id="localResubmissionInitialAssignment">
-            <button id="localResubmissionBtn">Output Resubmission Grades</button>
-            <div id="localResubmissionRes"></div>
-        </div>
-        <div id="localRemoveBox">
-            <h1>Remove grades from Canvas CSV files</h1>
-            <p>Please place latest Canvas CSV file for each bundle in the Canvas folder (renamed to match the bundle name)</p>
-            <p>Name of the assignment to remove grades from</p>
-            <input type="text" id="localRemoveAssignment">
-            <button id="localRemoveBtn">Remove Grades</button>
-            <div id="localRemoveRes"></div>
-        </div>
-    </div>
-    <script src="index.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>GradeScope2Canvas</title>
+        <link rel="stylesheet" href="index.css">
+        <title>Nice UI</title>
+    </head>
+    <body>
+        <div class="app">
+                <div class="verticalBanner">
+                    <img src="assets/Logo.png">
+                    <div class="hidden helpInfo">
+                    </div>
+                </div>
+                <div class="main">
+                    <div class="selectionBoxes">
+                        <div class="box">
+                            <h1>Actions</h1>
+                            <div class="btn" id="uploadBtn">
+                                <p>Upload</p>
+                                <svg width="77" height="75" viewBox="0 0 77 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path class="svgBg" d="M76.0804 33.6652L60.2581 3.83478C59.6631 2.6909 58.8028 1.73535 57.7624 1.06274C56.7219 0.390124 55.5375 0.0237873 54.3263 0H22.6757C21.4649 0.0257231 20.2812 0.392868 19.2411 1.06528C18.2009 1.7377 17.3403 2.69219 16.7439 3.83478L0.915599 33.5674C0.315637 34.7031 0 35.9891 0 37.2978C0 38.6066 0.315637 39.8926 0.915599 41.0283L16.7379 71.0283C17.3275 72.188 18.1833 73.1629 19.2226 73.8588C20.2618 74.5546 21.4492 74.9477 22.6697 75H54.3203C55.5411 74.9559 56.7305 74.5683 57.7715 73.8754C58.8125 73.1826 59.6694 72.2081 60.2581 71.0478L76.0804 41.2174C76.6831 40.0662 77 38.7651 77 37.4413C77 36.1176 76.6831 34.8165 76.0804 33.6652Z" fill="#4285F4"/>
+                                    <path class="svgBg" d="M54.6146 26.701H53.3462L49.8415 22.9167L23.4936 30.1173L26.9021 33.159L23.4936 36.5752L26.7157 39.6169L23.4756 43.0332L27.0824 46.0749L23.4756 49.4911L47.1544 75H54.5424C55.7624 74.9563 56.9508 74.5725 57.991 73.8864C59.0312 73.2003 59.8874 72.2354 60.4757 71.0865L73.2439 47.2373H73.2018L54.6146 26.701Z" fill="#4285F4"/>
+                                    <path class="svgBg" d="M47.8807 22.9167L28.339 26.3592L29.2589 28.1805L24.4486 31.4099L26.1443 34.536H22.5366V49.6559L47.1291 75H54.5189C55.7391 74.9563 56.9278 74.5725 57.9682 73.8863C59.0087 73.2001 59.8651 72.2351 60.4535 71.086L72.3049 48.9583L47.8807 22.9167Z" fill="#407ADD"/>
+                                    <path class="svgShape" d="M48.7367 26.3969H28.2632L29.4501 22.9167H47.5499L48.7367 26.3969ZM52.5763 31.5388H24.4237L25.6106 28.2483H51.3894L52.5763 31.5388ZM44.8675 34.7051L43.8172 36.8705H33.1828L32.1324 34.7051H22.5366V50H54.4634V34.7051H44.8675Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <div class="btn" id="convertBtn">
+                                <p>Convert</p>
+                                <svg width="77" height="75" viewBox="0 0 77 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path class="svgBg" d="M76.072 33.6506L60.252 3.83312C59.6571 2.68973 58.7969 1.73459 57.7566 1.06227C56.7163 0.389955 55.5321 0.023777 54.321 0H22.6752C21.464 0.0231292 20.2795 0.389037 19.2391 1.06142C18.1987 1.73381 17.3386 2.6893 16.7442 3.83312L0.918223 33.5854C0.316602 34.72 0 36.0057 0 37.3142C0 38.6228 0.316602 39.9085 0.918223 41.043L16.7382 71.03C17.3267 72.19 18.1823 73.1653 19.2215 73.8609C20.2608 74.5566 21.4485 74.949 22.6691 75H54.315C55.5355 74.9546 56.7241 74.5667 57.7648 73.8743C58.8055 73.1818 59.6625 72.2085 60.252 71.0495L76.072 41.2321C76.6801 40.0774 77 38.7709 77 37.4413C77 36.1118 76.6801 34.8052 76.072 33.6506Z" fill="#4285F4"/>
+                                    <path class="svgShape" opacity="0.07" d="M56.2214 27.9531L41.6405 28.2008L40.1668 35.3716L48.3655 44.2568L48.4798 45.6584L29.1891 24.7458L22.5784 30.9778L29.8748 39.5828L22.5483 50.2216L45.0812 74.9935H54.3145C55.535 74.9481 56.7236 74.5602 57.7643 73.8677C58.805 73.1753 59.662 72.202 60.2515 71.043L73.3767 46.2712L56.2214 27.9531Z" fill="black"/>
+                                    <path class="svgShape" d="M47.2647 50.1434H40.7563L26.6326 31.0039H22.5483V24.7458H29.1891L43.3188 43.8853H47.2647V38.9309L56.2214 47.0078L47.2647 55.0978V50.1434Z" fill="white"/>
+                                    <path class="svgShape" d="M40.1668 35.3585L43.3187 31.0821H47.2647V36.0365L56.2213 27.9531L47.2647 19.8696V24.824H40.7563L36.5697 30.4889L40.1668 35.3585Z" fill="white"/>
+                                    <path class="svgShape" d="M29.8448 39.6089L26.6326 43.9635H22.5483V50.2217H29.1891L33.4298 44.4785L29.8448 39.6089Z" fill="white"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <h1>Toggles</h1>
+                            <div class="btn" id="helpBtn">
+                                <p>Help</p>
+                                <svg width="77" height="75" viewBox="0 0 77 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path class="svgBg" d="M76.0754 33.6564L60.2547 3.83378C59.6598 2.6902 58.7995 1.73489 57.7592 1.06246C56.7189 0.390022 55.5345 0.0237811 54.3235 0H22.6762C21.465 0.0231332 20.2804 0.389104 19.24 1.06161C18.1995 1.73411 17.3394 2.68977 16.7449 3.83378L0.918264 33.5782C0.316616 34.713 0 35.9989 0 37.3077C0 38.6165 0.316616 39.9024 0.918264 41.0371L16.7389 71.0293C17.3275 72.1895 18.1831 73.1649 19.2224 73.8607C20.2617 74.5565 21.4495 74.949 22.6702 75H54.3175C55.5379 74.9546 56.7267 74.5666 57.7674 73.8741C58.8081 73.1815 59.6651 72.208 60.2547 71.0489L76.0754 41.2262C76.6814 40.0729 77 38.7685 77 37.4413C77 36.1141 76.6814 34.8097 76.0754 33.6564Z" fill="#4285F4"/>
+                                    <path class="svgShape" opacity="0.07" d="M58.1006 25.1021L29.6595 30.8919L18.5911 40.9198L22.2003 44.8318L18.9159 48.0918L43.7357 74.9804H54.3168C55.5373 74.935 56.7261 74.5471 57.7668 73.8545C58.8075 73.1619 59.6645 72.1885 60.2541 71.0293L74.9438 43.3582L58.1006 25.1021Z" fill="black"/>
+                                    <path class="svgShape" d="M44.632 53.9859H32.4808C32.3212 53.9859 32.1682 53.9172 32.0554 53.7949C31.9426 53.6726 31.8792 53.5068 31.8792 53.3339C31.8792 53.1609 31.9426 52.9951 32.0554 52.8728C32.1682 52.7505 32.3212 52.6819 32.4808 52.6819H44.632C44.7915 52.6819 44.9445 52.7505 45.0573 52.8728C45.1701 52.9951 45.2335 53.1609 45.2335 53.3339C45.2335 53.5068 45.1701 53.6726 45.0573 53.7949C44.9445 53.9172 44.7915 53.9859 44.632 53.9859Z" fill="white"/>
+                                    <path class="svgShape" d="M40.8964 47.6028H36.2404V53.3274H40.8964V47.6028Z" fill="white"/>
+                                    <path class="svgShape" d="M51.5257 43.3583C51.3766 43.3586 51.2289 43.3265 51.0915 43.2637C50.954 43.201 50.8296 43.109 50.7257 42.9931L42.5567 33.7934L37.0646 40.0526C36.8724 40.2726 36.6105 40.4056 36.3315 40.425C36.0526 40.4443 35.7772 40.3486 35.5607 40.1569L31.41 36.5253L27.0127 42.8562C26.9097 43.0051 26.7762 43.1262 26.6228 43.2099C26.4694 43.2936 26.3002 43.3377 26.1285 43.3387H18.5851V47.0486C18.5867 47.4735 18.7431 47.8804 19.0203 48.1809C19.2974 48.4813 19.6729 48.6508 20.0649 48.6525H57.078C57.47 48.6508 57.8454 48.4813 58.1226 48.1809C58.3998 47.8804 58.5562 47.4735 58.5578 47.0486V43.3583H51.5257Z" fill="white"/>
+                                    <path class="svgShape" d="M25.569 40.9328L30.3273 34.0867C30.4169 33.9582 30.5293 33.8505 30.658 33.7699C30.7867 33.6893 30.9289 33.6374 31.0764 33.6173C31.2239 33.5973 31.3735 33.6095 31.5166 33.6531C31.6596 33.6968 31.7932 33.7711 31.9093 33.8716L36.1562 37.588L41.7446 31.2179C41.8481 31.1009 41.9722 31.0076 42.1097 30.9438C42.2472 30.8799 42.3951 30.8468 42.5446 30.8463C42.6938 30.8459 42.8414 30.8781 42.9789 30.9408C43.1163 31.0035 43.2407 31.0955 43.3447 31.2114L51.9949 40.9262H58.5578V26.1844C58.5562 25.7596 58.3998 25.3526 58.1226 25.0522C57.8454 24.7518 57.47 24.5822 57.078 24.5805H20.0649C19.6729 24.5822 19.2974 24.7518 19.0203 25.0522C18.7431 25.3526 18.5867 25.7596 18.5851 26.1844V40.9328H25.569Z" fill="white"/>
+                                </svg>
 
+                            </div>
+                            <div class="btn" id="regradeBtn">
+                                <p>Regrade</p>
+                                <svg width="77" height="75" viewBox="0 0 77 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path class="svgBg" d="M76.0754 33.6564L60.2547 3.83378C59.6598 2.6902 58.7995 1.73489 57.7592 1.06246C56.7189 0.390022 55.5345 0.0237811 54.3235 0H22.6762C21.465 0.0231332 20.2804 0.389104 19.24 1.06161C18.1995 1.73411 17.3394 2.68977 16.7449 3.83378L0.918264 33.5782C0.316616 34.713 0 35.9989 0 37.3077C0 38.6165 0.316616 39.9024 0.918264 41.0371L16.7389 71.0293C17.3275 72.1895 18.1831 73.1649 19.2224 73.8607C20.2617 74.5565 21.4495 74.949 22.6702 75H54.3175C55.5379 74.9546 56.7267 74.5666 57.7674 73.8741C58.8081 73.1815 59.6651 72.208 60.2547 71.0489L76.0754 41.2262C76.6814 40.0729 77 38.7685 77 37.4413C77 36.1141 76.6814 34.8097 76.0754 33.6564Z" fill="#4285F4"/>
+                                    <path class="svgShape" opacity="0.07" d="M60.2542 71.0293L71.4009 50.0087L47.3391 23.8503L45.8773 24.5023L39.9942 18.1257L37.5279 29.1055L33.5456 24.7892L29.3829 25.6564L29.2987 29.5162L34.6284 35.293L34.5081 39.6223L37.5158 42.8823L37.7083 45.2491L28.3302 35.0844L24.366 35.3712L23.9209 39.6223L29.6837 45.8555L29.2927 49.924L52.4041 74.9805H54.317C55.5375 74.9351 56.7262 74.5471 57.7669 73.8545C58.8076 73.162 59.6647 72.1885 60.2542 71.0293Z" fill="black"/>
+                                    <path class="svgShape" d="M26.0924 35.5342C26.4136 35.5342 26.7277 35.6375 26.9947 35.8309C27.2618 36.0243 27.47 36.2993 27.5929 36.6209C27.7159 36.9426 27.748 37.2966 27.6854 37.6381C27.6227 37.9796 27.468 38.2932 27.2409 38.5394C27.0137 38.7856 26.7243 38.9533 26.4093 39.0212C26.0942 39.0891 25.7676 39.0543 25.4709 38.921C25.1741 38.7878 24.9204 38.5622 24.742 38.2727C24.5635 37.9832 24.4682 37.6428 24.4682 37.2946C24.4682 36.8277 24.6393 36.38 24.9439 36.0498C25.2485 35.7197 25.6616 35.5342 26.0924 35.5342ZM26.0924 33.9955C25.4904 33.9955 24.9019 34.189 24.4013 34.5515C23.9008 34.914 23.5107 35.4293 23.2803 36.0321C23.0499 36.6349 22.9896 37.2983 23.1071 37.9383C23.2245 38.5782 23.5144 39.1661 23.9401 39.6275C24.3658 40.0889 24.9081 40.4031 25.4986 40.5304C26.089 40.6577 26.701 40.5923 27.2572 40.3426C27.8134 40.0929 28.2888 39.6701 28.6232 39.1275C28.9577 38.585 29.1362 37.9471 29.1362 37.2946C29.1362 36.4196 28.8155 35.5805 28.2447 34.9618C27.6739 34.3431 26.8997 33.9955 26.0924 33.9955Z" fill="white"/>
+                                    <path class="svgShape" d="M54.7379 33.9107H39.988V30.6833H46.996C47.161 30.6543 47.3093 30.5575 47.4102 30.413C47.511 30.2685 47.5566 30.0874 47.5374 29.9074V24.4501C47.5616 24.2671 47.5184 24.081 47.4171 23.9321C47.3158 23.7833 47.1645 23.6836 46.996 23.6547H39.988V18.1061H36.9803V34.0607L36.6915 34.0281C35.8843 34.0281 35.11 34.3757 34.5392 34.9944C33.9684 35.6131 33.6477 36.4522 33.6477 37.3272C33.6477 38.2022 33.9684 39.0413 34.5392 39.6601C35.11 40.2788 35.8843 40.6264 36.6915 40.6264C36.7938 40.6264 36.89 40.6264 36.9863 40.5938V56.8939H39.994V51.1823H44.1447C44.3793 51.1823 44.5658 50.8367 44.5658 50.4064V44.9231C44.5658 44.4993 44.3793 44.1537 44.1447 44.1537H39.994V40.8937H54.7379C55.2853 40.8937 55.7365 40.5481 55.7365 40.1178V34.6866C55.7184 34.2302 55.2673 33.9107 54.7379 33.9107ZM36.6915 39.0746C36.463 39.0778 36.2363 39.0287 36.0265 38.9304C35.8166 38.8322 35.6283 38.687 35.4737 38.5045C35.3192 38.3219 35.2019 38.1061 35.1297 37.871C35.0574 37.636 35.0317 37.387 35.0543 37.1405C35.0768 36.8939 35.1472 36.6553 35.2607 36.4402C35.3742 36.2252 35.5283 36.0385 35.7129 35.8924C35.8976 35.7463 36.1086 35.6442 36.3321 35.5925C36.5557 35.5409 36.7868 35.541 37.0103 35.5929V39.042C36.9053 39.0642 36.7985 39.0751 36.6915 39.0746Z" fill="white"/>
+                                    <path class="svgShape" d="M31.4703 45.862C31.7916 45.862 32.1056 45.9652 32.3727 46.1586C32.6398 46.3521 32.8479 46.627 32.9709 46.9487C33.0938 47.2704 33.126 47.6243 33.0633 47.9658C33.0006 48.3073 32.8459 48.621 32.6188 48.8672C32.3917 49.1134 32.1023 49.281 31.7872 49.349C31.4721 49.4169 31.1456 49.382 30.8488 49.2488C30.552 49.1155 30.2984 48.8899 30.1199 48.6004C29.9414 48.3109 29.8462 47.9706 29.8462 47.6224C29.8477 47.156 30.0194 46.7092 30.3236 46.3795C30.6279 46.0497 31.0401 45.8637 31.4703 45.862ZM31.4703 44.3232C30.8683 44.3232 30.2798 44.5167 29.7793 44.8792C29.2787 45.2418 28.8886 45.757 28.6582 46.3599C28.4278 46.9627 28.3676 47.626 28.485 48.266C28.6024 48.906 28.8923 49.4938 29.318 49.9552C29.7437 50.4166 30.2861 50.7308 30.8765 50.8581C31.467 50.9854 32.079 50.9201 32.6352 50.6704C33.1913 50.4207 33.6667 49.9978 34.0012 49.4553C34.3356 48.9127 34.5142 48.2749 34.5142 47.6224C34.5142 47.1891 34.4354 46.7601 34.2825 46.3599C34.1295 45.9596 33.9053 45.5959 33.6226 45.2895C33.34 44.9832 33.0044 44.7402 32.6352 44.5744C32.2659 44.4086 31.8701 44.3232 31.4703 44.3232Z" fill="white"/>
+                                    <path class="svgShape" d="M31.4703 25.4477C31.7916 25.4477 32.1056 25.551 32.3727 25.7444C32.6398 25.9378 32.8479 26.2128 32.9709 26.5345C33.0938 26.8561 33.126 27.2101 33.0633 27.5516C33.0006 27.8931 32.8459 28.2067 32.6188 28.4529C32.3917 28.6991 32.1023 28.8668 31.7872 28.9347C31.4721 29.0026 31.1456 28.9678 30.8488 28.8345C30.552 28.7013 30.2984 28.4757 30.1199 28.1862C29.9414 27.8967 29.8462 27.5563 29.8462 27.2081C29.8462 26.7412 30.0173 26.2935 30.3219 25.9633C30.6265 25.6332 31.0396 25.4477 31.4703 25.4477ZM31.4703 23.909C30.8683 23.909 30.2798 24.1025 29.7793 24.465C29.2787 24.8275 28.8886 25.3428 28.6582 25.9456C28.4278 26.5484 28.3676 27.2118 28.485 27.8518C28.6024 28.4917 28.8923 29.0796 29.318 29.541C29.7437 30.0024 30.2861 30.3166 30.8765 30.4439C31.467 30.5712 32.079 30.5058 32.6352 30.2561C33.1913 30.0064 33.6667 29.5836 34.0012 29.041C34.3356 28.4985 34.5142 27.8606 34.5142 27.2081C34.5142 26.3332 34.1935 25.494 33.6226 24.8753C33.0518 24.2566 32.2776 23.909 31.4703 23.909Z" fill="white"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
 
-</body>
+                    <div class="infoScreenBg">
+                        <div class="infoScreens">
+                            <div class="infoScreen hidden" id="uploadGradeScreen">
+                                <h1>Upload Assignments</h1>
+                                <div class="form__group field">
+                                    <select class="form__field" id="uploadGradeColumnSelect">
+                                        <option value="None">Select Gradescope Column</option>
+                                        <option value="Email">Email</option>
+                                        <option value="SID">SID</option>
+                                    </select>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="SID or Email" name="uploadGradeColumnName" id='uploadGradeColumnName' required />
+                                        <label for="uploadGradeColumnName" class="form__label">Column Name in Gradescope CSVs</label>
+                                    </div>
+                                    <div class="submitBtn" id="uploadGradeSubmitBtn">
+                                        <p>Upload Assignments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="infoScreen hidden" id="uploadRegradeScreen">
+                                <h1>Upload Regrade</h1>
+                                <div class="form__group field">
+                                    <select class="form__field" id="uploadResubmissionColumnSelect">
+                                        <option value="None">Select Gradescope Column</option>
+                                        <option value="Email">Email</option>
+                                        <option value="SID">SID</option>
+                                    </select>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="SID or Email" name="uploadResubmissionGradescopeColumn" id='uploadResubmissionGradescopeColumn' required />
+                                        <label for="uploadResubmissionGradescopeColumn" class="form__label">Column Name in Gradescope CSVs</label>
+                                    </div>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="Example Name" name="uploadResubmissionInitialAssignment" id='uploadResubmissionInitialAssignment' required />
+                                        <label for="uploadResubmissionInitialAssignment" class="form__label">Initial Assignment Name</label>
+                                    </div>
+                                    <div class="submitBtn" id="uploadResubmissionSubmitBtn">
+                                        <p>Upload Regrade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="infoScreen hidden" id="convertGradeScreen">
+                                <h1>Convert Assignments</h1>
+                                <div class="form__group field">
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="SID" name="convertGradeGradescopeColumn" id='convertGradeGradescopeColumn' required />
+                                        <label for="convertGradeGradescopeColumn" class="form__label">Gradescope SID Column</label>
+                                    </div>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="Student ID" name="convertGradeCanvasColumn" id='convertGradeCanvasColumn' required />
+                                        <label for="convertGradeCanvasColumn" class="form__label">Canvas SID Column</label>
+                                    </div>
+                                    <div class="submitBtn" id="convertGradeSubmitBtn">
+                                        <p>Convert Assignments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="infoScreen hidden" id="convertRegradeScreen">
+                                <h1>Convert Regrade</h1>
+                                <div class="form__group field">
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="SID" name="convertResubmissionGradescopeColumn" id='convertResubmissionGradescopeColumn' required />
+                                        <label for="convertResubmissionGradescopeColumn" class="form__label">Gradescope SID Column</label>
+                                    </div>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="Student ID" name="convertResubmissionCanvasColumn" id='convertResubmissionCanvasColumn' required />
+                                        <label for="convertResubmissionCanvasColumn" class="form__label">Canvas SID Column</label>
+                                    </div>
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="Example Name" name="convertResubmissionInitialAssignment" id='convertResubmissionInitialAssignment' required />
+                                        <label for="convertResubmissionInitialAssignment" class="form__label">Initial Assignment Name</label>
+                                    </div>
+                                    <div class="submitBtn" id="convertResubmissionSubmitBtn">
+                                        <p>Convert Regrade</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="infoScreen hidden" id="removeScreen">
+                                <h1>Remove</h1>
+                                <div class="form__group field">
+                                    <div class="form__group field">
+                                        <input type="input" class="form__field" placeholder="Example Name" name="removeCanvasColumnName" id='removeCanvasColumnName' required />
+                                        <label for="removeCanvasColumnName" class="form__label">Name of Assignment</label>
+                                    </div>
+                                    <div class="submitBtn" id="removeSubmitBtn">
+                                        <p>Remove from Canvas CSVs</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="infoScreen hidden" id="courseSetupScreen">
+                                <h1>Course Setup</h1>
+                                <div class="form__group field">
+                                    <input type="input" class="form__field" placeholder="Example Course" name="courseSetupInput" id='courseSetupInput' required />
+                                    <label for="courseSetupInput" class="form__label">Course Name</label>
+                                    <div class="submitBtn" id="courseSetupSubmitBtn">
+                                        <p>Set Course Info</p>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                    <div class="box" id="courseSetupBox">
+                        <h1>Utilities</h1>
+                        <div class="btn" id="courseSetupBtn">
+                            <p>Course Setup</p>
+                        </div>
+                        <div class="btn" id="removeBtn">
+                            <p>Remove</p>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <script src="index.js"></script>
+    </body>
+</html>
