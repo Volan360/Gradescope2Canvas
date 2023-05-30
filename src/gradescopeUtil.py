@@ -56,8 +56,6 @@ def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE
         for assignment in gradeScopeScores[tag]:
             if "Points: " + assignment not in fieldnames:
                 fieldnames.append("Points: " + assignment)
-            else:
-                return
         csvWriter = csv.DictWriter(csvOutput, fieldnames=fieldnames)
         csvWriter.writeheader()
         for assignment in gradeScopeScores[tag]:
@@ -167,12 +165,13 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
         if byEmailPrefix:
             matchColumn = submission.user[netIDEnpoint]
         else:
-            matchColumn = submission.user[sidEndpoint]
+            matchColumn = int(submission.user[sidEndpoint])
         try:
             submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[matchColumn]}})
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
-        except:
-            print("Could not find the student " + submission.user['short_name'] + " in the Gradescope file for " + assignment.name)
+        except Exception as e:
+            print(e)
+            print("Failed to upload the score for " + submission.user['short_name'] + " for " + assignment.name)
             continue
     print("\nFinished uploading scores for " + assignment.name + "\n")
 if __name__ == "__main__":

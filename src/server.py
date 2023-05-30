@@ -45,22 +45,26 @@ def uploadGrade():
     gradescopeAssignmentList = os.listdir(canvasServer.GRADESCOPE_FILE_PATH)
     emailOrSID = request.args.get('emailOrSID')
     gradescopeColumn = request.args.get('gradescopeColumn')
+    print("Found " + str(len(gradescopeAssignmentList)) + " assignments in gradescope folder")
     for assignment in gradescopeAssignmentList:
         scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        print("Found " + str(len(scores)) + " bundles in " + assignment)
         for bundle in scores:
             if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
                 print("Assignment " + bundle + " not found in config.yaml (meaning it has no rubric on canvas)")
                 returnMsg += "Assignment " + bundle + " not found in config.yaml (meaning it has no rubric on canvas)\n"
                 continue
-            canvasAssignment = course.get_assignment(canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
             try:
+                canvasAssignment = course.get_assignment(canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS'][bundle])
                 rubric = canvasAssignment.rubric
                 print("Rubric found for assignment: " + canvasAssignment.name)
                 returnMsg += "Rubric found for assignment: " + canvasAssignment.name + "\n"
-            except:
+            except Exception as e:
+                print(e)
                 print("Rubric not found for assignment: " + canvasAssignment.name)
                 returnMsg += "Rubric not found for assignment: " + canvasAssignment.name + "\n"
                 continue
+            print("Found " + str(len(scores[bundle])) + " criteria in " + bundle)
             for criterion in scores[bundle]:
                 if emailOrSID == "Email":
                     gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
@@ -70,7 +74,7 @@ def uploadGrade():
                     gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
                                                       canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
                                                       canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
-
+    print("Done!")
     return "Done!"
 
 @app.route('/localGrade')
@@ -83,6 +87,7 @@ def localGrade():
     for assignment in gradescopeAssignmentList:
         scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
         gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    print("Done!")
     return "Done!"
 
 @app.route('/uploadResubmission')
@@ -104,7 +109,7 @@ def uploadResubmission():
         try:
             rubric = canvasAssignment.rubric
             print("Rubric found for assignment: " + canvasAssignment.name)
-        except:
+        except Exception as e:
             print("Rubric not found for assignment: " + canvasAssignment.name)
             continue
         for criterion in scores[bundle]:
@@ -116,7 +121,7 @@ def uploadResubmission():
                 gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
                                                   canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
                                                   canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
-
+    print("Done!")
     return "Done!"
 
 @app.route('/localResubmission')
@@ -129,6 +134,7 @@ def localResubmission():
     canvasColumn = request.args.get('canvasColumn')
     scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
     gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    print("Done!")
     return "Done!"
 
 @app.route('/courseInfo')
@@ -144,11 +150,15 @@ def courseInfo():
                 #tab indentation is forbidden in yaml files
                 yamlInfo += "  COURSE_ID: " + str(course.id) + "\n  ASSIGNMENTS:\n"
                 for assignment in course.get_assignments():
-                    if assignment.rubric:
+                    try:
+                        rubric = assignment.rubric
                         print(assignment.name + ": " + str(assignment.id))
                         yamlInfo += "    " + assignment.name + ": " + str(assignment.id) + "\n"
+                    except Exception as e:
+                        continue
                 break
-        except:
+        except Exception as e:
+            print(e)
             continue
     with open("config.yaml", "r") as f:
         lines = f.readlines()
@@ -161,6 +171,7 @@ def courseInfo():
                 break
             f.write(line)
         f.write("\n" + yamlInfo)
+    print("Done!")
     return "Done!"
 
 @app.route('/localRemove')
@@ -169,6 +180,7 @@ def localRemove():
     canvasServer.loadConfig()
     removeColumn = request.args.get('removeColumn')
     gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    print("Done!")
     return "Done!"
 
 
