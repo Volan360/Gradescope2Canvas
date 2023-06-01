@@ -1,0 +1,234 @@
+html,body {
+    margin: 0px;
+    height: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.app {
+    display: flex;
+    column-count: 2;
+    height: 100%;
+}
+.verticalBanner {
+    padding-top: 5%;
+    background: white;
+    flex: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.helpInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+ol {
+    padding-right: 1.2rem;
+}
+
+li {
+    position: relative;
+    list-style-type: none;
+    padding-left: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+li::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 5px;
+    height: 11px;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+    border-color: #00a8a8;
+    transform-origin: bottom left;
+    transform: rotate(45deg);
+}
+
+.main {
+    background: black;
+    flex: 66%;
+    display: flex;
+    padding-right: 10%;
+    align-items: center;
+    justify-content: center;
+}
+
+.selectionBoxes{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5%;
+    align-items: center;
+    margin-left: -15%;
+    margin-right: -15%;
+    height: 100%;
+    width: 100%;
+}
+
+.btn {
+    background: white;
+    border-radius: 4px;
+    border: darkgray 3px solid;
+    box-shadow: darkgray;
+    width: 70%;
+    height: 20%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 2em;
+    font-family: "Inconsolata", "Times New Roman";
+}
+
+
+.btn:hover {
+    background: #4285F4;
+    border: darkblue 3px solid;
+    box-shadow: none;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.btn:hover .svgBg{
+    fill: white;
+    transition: 0.5s;
+}
+.btn:hover .svgShape{
+    fill: #4285F4;
+    transition: 0.5s;
+}
+
+.active{
+    background: #4285F4;
+    border: darkblue 3px solid;
+    box-shadow: none;
+    transition: 0.5s;
+    cursor: pointer;
+}
+.active .svgBg{
+    fill: white;
+    transition: 0.5s;
+}
+.active .svgShape{
+    fill: #4285F4;
+    transition: 0.5s;
+}
+
+.box {
+    background: lightgrey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 8px;
+    width: 35%;
+    height: 30%;
+}
+#courseSetupBox {
+    margin-left: -5%;
+}
+
+
+.infoScreenBg {
+    background: lightgrey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 10%;
+    width: 80%;
+    height: 50%;
+}
+
+.infoScreens {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.form__group {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    padding: 15px 0 0;
+    margin-top: 10px;
+}
+
+.form__field {
+    font-family: inherit;
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid gray;
+    outline: 0;
+    font-size: 1.3rem;
+    color: black;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+
+.from__field:focus ~.form__label{
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: #4285F4;
+    font-weight:700;
+}
+
+.form__field:focus::placeholder {
+    color: transparent;
+}
+
+.form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: black;
+}
+
+.submitBtn {
+    cursor: pointer;
+    outline: 0;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.submitBtn:hover {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+
+
