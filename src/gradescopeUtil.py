@@ -121,7 +121,7 @@ def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gra
             if '@' in row[gradescopeColumn]:
                 userLogin = row[gradescopeColumn].split('@')[0]
             else:
-                userLogin = row[gradescopeColumn]
+                userLogin = int(row[gradescopeColumn])
             if not userLogin in initialScores:
                 initialScores[userLogin] = {}
             initialScores[userLogin][question] = float(row['Score'])
@@ -131,13 +131,13 @@ def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gra
             if '@' in row[gradescopeColumn]:
                 userLogin = row[gradescopeColumn].split('@')[0]
             else:
-                userLogin = row[gradescopeColumn]
+                userLogin = int(row[gradescopeColumn])
             if not userLogin in resubmissionScores:
                 resubmissionScores[userLogin] = {}
             resubmissionScores[userLogin][question] = float(row['Score'])
         for student in resubmissionScores:
             if initialScores[student][question] > 0 and resubmissionScores[student][question] > 0:
-                print(student + " cheated on " + question)
+                print(str(student) + " cheated on " + question)
                 print("Initial Score: " + str(initialScores[student][question]))
                 print("Resubmission Score: " + str(resubmissionScores[student][question]))
                 cheatingStudents.append(student)
