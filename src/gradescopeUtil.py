@@ -136,6 +136,10 @@ def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gra
                 resubmissionScores[userLogin] = {}
             resubmissionScores[userLogin][question] = float(row['Score'])
         for student in resubmissionScores:
+            if student not in initialScores:
+                print("Found a student who did not submit the initial assignment: " + str(student) + " on " + question
+                      + " not adding to the list of cheaters")
+                continue
             if initialScores[student][question] > 0 and resubmissionScores[student][question] > 0:
                 print(str(student) + " cheated on " + question)
                 print("Initial Score: " + str(initialScores[student][question]))
