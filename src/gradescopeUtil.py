@@ -3,7 +3,7 @@ import csv
 from canvasapi import Canvas
 import yaml
 
-with open("config.yaml", 'r') as stream:
+with open("config.yaml", 'r', encoding='utf-8-sig') as stream:
     CONFIG = yaml.safe_load(stream)
 
 CANVAS_FILE_PATH = CONFIG['CANVAS_FOLDER']
@@ -80,7 +80,7 @@ def removeCanvasAssignmentLocal(assignment, canvasFilePath=CANVAS_FILE_PATH, out
     assignment = "Points: " + assignment
     for rubricScoresFile in os.listdir(canvasFilePath):
         try:
-            csvInput = open(canvasFilePath + rubricScoresFile, 'r')
+            csvInput = open(canvasFilePath + rubricScoresFile, 'r', encoding='utf-8-sig')
         except:
             print("Could not find the file: " + canvasFilePath + rubricScoresFile)
             continue
@@ -109,10 +109,10 @@ def removeCanvasAssignmentLocal(assignment, canvasFilePath=CANVAS_FILE_PATH, out
         csvInput.close()
         csvOutput.close()
 def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
-    cheatingStudents = []
+    cheatingStudents = {}
     for question in os.listdir(gradescopeFilePath + initialAssignment):
-        initialReader = csv.DictReader(open(gradescopeFilePath + initialAssignment + os.sep + question, 'r'))
-        resubmissionReader = csv.DictReader(open(gradescopeFilePath + resubmissionAssignment + os.sep + question, 'r'))
+        initialReader = csv.DictReader(open(gradescopeFilePath + initialAssignment + os.sep + question, 'r', encoding='utf-8-sig'))
+        resubmissionReader = csv.DictReader(open(gradescopeFilePath + resubmissionAssignment + os.sep + question, 'r', encoding='utf-8-sig'))
         initialScores = {}
         resubmissionScores = {}
         for row in initialReader:
@@ -141,21 +141,18 @@ def getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gra
                       + " not adding to the list of cheaters")
                 continue
             if initialScores[student][question] > 0 and resubmissionScores[student][question] > 0:
-                print(str(student) + " cheated on " + question)
+                print(str(student) + " cheated on " + question, "setting resubmission score for this question to 0")
                 print("Initial Score: " + str(initialScores[student][question]))
                 print("Resubmission Score: " + str(resubmissionScores[student][question]))
-                cheatingStudents.append(student)
+                resubmissionScores[student][question] = 0
     return cheatingStudents
 def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     initialScores = getGradescopeScores(initialAssignment, gradescopeColumn, gradescopeFilePath)
     resubmissionScores = getGradescopeScores(resubmissionAssignment, gradescopeColumn, gradescopeFilePath)
-    cheatingStudents = getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath)
+    getCheaters(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath)
     for tag in resubmissionScores:
         for student in resubmissionScores[tag][resubmissionAssignment]:
-            if student in cheatingStudents:
-                initialScores[tag][initialAssignment][student] = 0
-            else:
-                initialScores[tag][initialAssignment][student] += resubmissionScores[tag][resubmissionAssignment][student]
+            initialScores[tag][initialAssignment][student] += resubmissionScores[tag][resubmissionAssignment][student]
     return initialScores
 
 def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefix=True,
@@ -164,7 +161,7 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
     for criterion in assignment.rubric:
         if criterion['description'] == criterionName:
             criterion_id = criterion['id']
-    submissions = assignment.get_submissions(include=['rubric_assessment', 'user'])
+    submissions = assignment.get_submissions(include=['rubric_assessment', 'user', 'rubric'])
     for submission in submissions:
         if byEmailPrefix:
             matchColumn = submission.user[netIDEnpoint]
@@ -172,6 +169,7 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
             matchColumn = int(submission.user[sidEndpoint])
         try:
             submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[matchColumn]}})
+            submission.edit(rubric={'use_for_grading': True, 'hide_score_total': False})
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
         except Exception as e:
             print(e)
