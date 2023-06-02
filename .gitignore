@@ -2,3 +2,4 @@
 src/config.yaml
 main.spec
 build
+env
