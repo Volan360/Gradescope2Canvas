@@ -3,3 +3,5 @@ src/config.yaml
 main.spec
 build
 env
+.DS_Store
+Desktop.ini
