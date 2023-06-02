@@ -19,6 +19,7 @@ html,body {
     display: flex;
     flex-direction: column;
     justify-content: start;
+    margin-right: 1rem;
 }
 
 .helpInfo {
@@ -26,6 +27,8 @@ html,body {
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 ol {
@@ -61,18 +64,22 @@ li::before {
     padding-right: 10%;
     align-items: center;
     justify-content: center;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .selectionBoxes{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5%;
+    gap: 2rem;
     align-items: center;
-    margin-left: -15%;
-    margin-right: -15%;
-    height: 100%;
-    width: 100%;
+    margin-right: 2rem;
+    margin-left: 1rem;
+    height: fit-content;
+    width: fit-content;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .btn {
@@ -80,15 +87,18 @@ li::before {
     border-radius: 4px;
     border: darkgray 3px solid;
     box-shadow: darkgray;
-    width: 70%;
-    height: 20%;
+    width: fit-content;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    gap : 1rem;
     display: flex;
     justify-content: space-around;
     align-items: center;
     font-size: 2em;
     font-family: "Inconsolata", "Times New Roman";
+    min-width: fit-content;
+    min-height: fit-content;
 }
-
 
 .btn:hover {
     background: #4285F4;
@@ -130,11 +140,17 @@ li::before {
     justify-content: space-around;
     align-items: center;
     border-radius: 8px;
-    width: 35%;
-    height: 30%;
+    width: fit-content;
+    height: fit-content;
+    padding: 2rem;
+    gap: 1rem;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 #courseSetupBox {
     margin-left: -5%;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 
@@ -144,20 +160,26 @@ li::before {
     align-items: center;
     justify-content: center;
     border-radius: 8px;
+    width: fit-content;
+    height: fit-content;
+    padding: 2rem;
     margin-right: 10%;
-    width: 80%;
-    height: 50%;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .infoScreens {
     background: white;
     border-radius: 8px;
-    width: 90%;
-    height: 90%;
+    width: fit-content;
+    height: fit-content;
+    padding: 3rem;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .form__group {
@@ -222,6 +244,8 @@ li::before {
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     color: #0d6efd;
     border-color: #0d6efd;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .submitBtn:hover {
