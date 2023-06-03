@@ -47,6 +47,9 @@ def uploadGrade():
     gradescopeColumn = request.args.get('gradescopeColumn')
     print("Found " + str(len(gradescopeAssignmentList)) + " assignments in gradescope folder")
     for assignment in gradescopeAssignmentList:
+        if "_Resubmission" in assignment:
+            print("Skipping resubmission assignment: " + assignment)
+            continue
         scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
         print("Found " + str(len(scores)) + " bundles in " + assignment)
         for bundle in scores:
@@ -85,6 +88,9 @@ def localGrade():
     gradescopeColumn = request.args.get('gradescopeColumn')
     canvasColumn = request.args.get('canvasColumn')
     for assignment in gradescopeAssignmentList:
+        if "_Resubmission" in assignment:
+            print("Skipping resubmission assignment: " + assignment)
+            continue
         scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
         gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
     print("Done!")
