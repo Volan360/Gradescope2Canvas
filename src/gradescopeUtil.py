@@ -187,12 +187,26 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
             continue
         try:
             submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[matchColumn]}})
-            submission.edit(rubric={'use_for_grading': True, 'hide_score_total': False})
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
         except Exception as e:
+            print(e.__class__.__name__)
             print(e)
             print("Failed to upload the score for " + submission.user['short_name'] + " for " + assignment.name)
-            continue
+        try:
+            totalScore = 0
+            for criterion in submission.rubric_assessment:
+                totalScore += submission.rubric_assessment[criterion]['points']
+            submission.edit(submission={'posted_grade': totalScore})
+            print("Successfully set the total score for " + submission.user['short_name'] + " for " + assignment.name)
+        except Exception as e:
+            print(e)
+            print("Failed set the total score " + submission.user['short_name'] + " setting to 0")
+            try:
+                submission.edit(submission={'posted_grade': 0})
+            except Exception as e:
+                print(e)
+                print("Failed to set the total score to 0 for " + submission.user['short_name'])
+
     print("\nFinished uploading scores for " + assignment.name + "\n")
 if __name__ == "__main__":
     #set variables from config
