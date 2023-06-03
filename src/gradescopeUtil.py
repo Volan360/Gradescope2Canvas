@@ -124,6 +124,13 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
                     gradescopeScores[tag] = {}
                 if initialAssignment not in gradescopeScores[tag]:
                     gradescopeScores[tag][initialAssignment] = {}
+            if '@' in row[gradescopeColumn]:
+                userLogin = row[gradescopeColumn].split('@')[0]
+            else:
+                userLogin = int(row[gradescopeColumn])
+            if not userLogin in initialScores:
+                initialScores[userLogin] = {}
+            initialScores[userLogin][question] = float(row['Score'])
             tags = row['Tags'].split(',')
             break
 
@@ -148,7 +155,7 @@ def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn
                 resubmissionScores[userLogin] = {}
             resubmissionScores[userLogin][question] = float(row['Score'])
         for student in resubmissionScores:
-            if student not in initialScores:
+            if student not in initialScores.keys():
                 print("Found a student who did not submit the initial assignment: " + str(student) + " on " + question
                       + " adding points for their submission to the initial assignment")
                 initialScores[student] = {question: resubmissionScores[student][question]}
