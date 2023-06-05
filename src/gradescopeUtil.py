@@ -181,8 +181,7 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
     for criterion in assignment.rubric:
         if criterion['description'] == criterionName:
             criterion_id = criterion['id']
-    submissions = assignment.get_submissions(include=['rubric_assessment', 'user', 'rubric'])
-    for submission in submissions:
+    for submission in assignment.get_submissions(include=['rubric_assessment', 'user']):
         try:
             if byEmailPrefix:
                 matchColumn = submission.user[netIDEnpoint]
@@ -193,16 +192,41 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
             print("Could not find the email prefix or SID for " + submission.user['short_name'] + " for " + assignment.name + ", skipping")
             continue
         try:
-            submission.edit(rubric_assessment={criterion_id: {'points': assignmentScores[matchColumn]}})
+            submission.rubric_assessment[criterion_id]['points'] = assignmentScores[matchColumn]
+            submission.edit(rubric_assessment=submission.rubric_assessment)
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
         except Exception as e:
-            print(e.__class__.__name__)
-            print(e)
-            print("Failed to upload the score for " + submission.user['short_name'] + " for " + assignment.name)
+            if isinstance(e, KeyError):
+                print(submission.user['short_name'] + " did not submit the assignment or this assignment doesn't exist in this rubric bundle, setting score to 0")
+            else:
+                print(e)
+                print("Failed to upload the score for " + submission.user['short_name'] + " for " + assignment.name + ", setting to 0")
+            try:
+                submission.rubric_assessment[criterion_id]['points'] = 0
+                submission.edit(rubric_assessment=submission.rubric_assessment)
+            except Exception as e:
+                print(e)
+                print("Failed to set the score for " + submission.user['short_name'] + " for " + assignment.name + " to 0")
+                if "'Submission' object has no attribute 'rubric_assessment'" in str(e):
+                    print("This is likely because the student has no submission for the bundle, creating an empty submission")
+                    try:
+                        zeroedRubricAssessment = {}
+                        for criterion in assignment.rubric:
+                            zeroedRubricAssessment[criterion['id']] = {'points': 0}
+                        try:
+                            zeroedRubricAssessment[criterion_id]['points'] = assignmentScores[matchColumn]
+                        except Exception as a:
+                            zeroedRubricAssessment[criterion_id] = {'points': 0}
+                        submission.edit(submission={'posted_grade': 0, 'rubric_assessment': zeroedRubricAssessment})
+                    except Exception as e:
+                        print(e)
+                        print("Failed to create an empty submission for " + submission.user['short_name'] + " for " + assignment.name)
+    for submission in assignment.get_submissions(include=['rubric_assessment', 'user']):
         try:
             totalScore = 0
             for criterion in submission.rubric_assessment:
-                totalScore += submission.rubric_assessment[criterion]['points']
+                if 'points' in submission.rubric_assessment[criterion]:
+                    totalScore += submission.rubric_assessment[criterion]['points']
             submission.edit(submission={'posted_grade': totalScore})
             print("Successfully set the total score for " + submission.user['short_name'] + " for " + assignment.name)
         except Exception as e:
