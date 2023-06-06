@@ -67,7 +67,6 @@ def uploadGrade():
                 print("Rubric not found for assignment: " + canvasAssignment.name)
                 returnMsg += "Rubric not found for assignment: " + canvasAssignment.name + "\n"
                 continue
-            print("Found " + str(len(scores[bundle])) + " criteria in " + bundle)
             for criterion in scores[bundle]:
                 if emailOrSID == "Email":
                     gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
