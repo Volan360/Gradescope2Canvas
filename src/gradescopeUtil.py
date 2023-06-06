@@ -197,7 +197,7 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
             print("Successfully uploaded the score for " + submission.user['short_name'] + " for " + assignment.name)
         except Exception as e:
             if isinstance(e, KeyError):
-                print(submission.user['short_name'] + " did not submit the assignment or this assignment doesn't exist in this rubric bundle, setting score to 0")
+                print(submission.user['short_name'] + " did not submit the assignment or this assignment doesn't exist in their submission")
             else:
                 print(e)
                 print("Failed to upload the score for " + submission.user['short_name'] + " for " + assignment.name + ", setting to 0")

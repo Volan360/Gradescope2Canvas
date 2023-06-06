@@ -133,6 +133,9 @@ function setHelpInfo(actionName) {
     }
 
     if (actionName === "uploadAssignment"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Upload Assignments";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
@@ -145,6 +148,8 @@ function setHelpInfo(actionName) {
         li4.textContent = "Rename the folder to the name of the assignment, exactly as it appears as a criterion in the Canvas rubrics";
         let li5 = document.createElement("li");
         li5.textContent = "Repeat steps 1-4 for each assignment you want to grade";
+        let li6 = document.createElement("li");
+
         ol.appendChild(li1);
         ol.appendChild(li2);
         ol.appendChild(li3);
@@ -153,6 +158,9 @@ function setHelpInfo(actionName) {
         helpInfo.appendChild(ol);
     }
     else if (actionName === "convertAssignment"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Convert Assignments";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
@@ -179,6 +187,9 @@ function setHelpInfo(actionName) {
         helpInfo.appendChild(ol);
     }
     else if (actionName === "courseSetup"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Course Setup";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
@@ -187,6 +198,9 @@ function setHelpInfo(actionName) {
         helpInfo.appendChild(ol);
     }
     else if (actionName === "removeAssignment"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Remove An Assignment";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
@@ -201,6 +215,9 @@ function setHelpInfo(actionName) {
         helpInfo.appendChild(ol);
     }
     else if (actionName === "uploadResubmission"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Upload A Resubmission";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
@@ -221,6 +238,9 @@ function setHelpInfo(actionName) {
         helpInfo.appendChild(ol);
     }
     else if (actionName === "convertResubmission"){
+        let h1 = document.createElement("h1");
+        h1.textContent = "Convert A Resubmission";
+        helpInfo.appendChild(h1);
 
         let ol = document.createElement("ol");
         let li1 = document.createElement("li");
