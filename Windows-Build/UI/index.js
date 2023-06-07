@@ -301,7 +301,7 @@ function setListeners() {
         else {
             emailOrSID = uploadGradeMatchBy.value
         }
-        gradescopeColumn = uploadGradeColumnName.value ? uploadGradeColumnName.value !== "" : emailOrSID
+        gradescopeColumn = (uploadGradeColumnName.value !== "") ?uploadGradeColumnName.value : emailOrSID
         fetch(`http://localhost:${portNumber}/uploadGrade?emailOrSID=${encodeURIComponent(emailOrSID)}&gradescopeColumn=${encodeURIComponent(gradescopeColumn)}`)
             .then(res => {
                 //if there are any errors, do a window alert
@@ -370,7 +370,7 @@ function setListeners() {
             return
         }
 
-        gradescopeColumn = uploadResubmissionGradescopeColumn.value ? uploadResubmissionGradescopeColumn.value !== "" : emailOrSID
+        gradescopeColumn = (uploadResubmissionGradescopeColumn.value !== "") ? uploadResubmissionGradescopeColumn.value : emailOrSID
         fetch(`http://localhost:${portNumber}/uploadResubmission?emailOrSID=${encodeURIComponent(emailOrSID)}&gradescopeColumn=${encodeURIComponent(gradescopeColumn)}&initialAssignment=${encodeURIComponent(uploadResubmissionInitialAssignment.value)}`)
             .then(res => {
                 //if there are any errors, do a window alert
