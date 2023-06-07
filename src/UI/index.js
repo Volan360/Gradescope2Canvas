@@ -103,9 +103,9 @@ function setHelpInfo(actionName) {
         let li1 = document.createElement("li");
         li1.textContent = "Open the config.yaml file in a text editor (it's inside the Program folder)";
         let li2 = document.createElement("li");
-        li2.textContent = "Open your canvas account in a web browser";
+        li2.textContent = "Open Canvas in a web brwoser and log in";
         let li3 = document.createElement("li");
-        li3.textContent = "Click on Settings";
+        li3.textContent = "Click on Account (top left) and select \"Settings\"";
         let li4 = document.createElement("li");
         li4.textContent = "Scroll down to \"Approved Integrations\" and click \"+ New Access Token\"";
         let li5 = document.createElement("li");
