@@ -50,7 +50,11 @@ def uploadGrade():
         if "_Resubmission" in assignment:
             print("Skipping resubmission assignment: " + assignment)
             continue
-        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        try:
+            scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        except NotADirectoryError:
+            print("Skipping file: " + assignment)
+            continue
         print("Found " + str(len(scores)) + " bundles in " + assignment)
         for bundle in scores:
             if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
