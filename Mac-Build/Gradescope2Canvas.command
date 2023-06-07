@@ -1,3 +1,3 @@
+open $(dirname "$0")/UI/index.html
 cd $(dirname "$0")
-open ./UI/index.html
-./Main
+$(dirname "$0")/Main
