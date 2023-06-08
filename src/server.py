@@ -50,7 +50,11 @@ def uploadGrade():
         if "_Resubmission" in assignment:
             print("Skipping resubmission assignment: " + assignment)
             continue
-        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        try:
+            scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        except NotADirectoryError:
+            print("Skipping " + assignment + " because it is not a directory")
+            continue
         print("Found " + str(len(scores)) + " bundles in " + assignment)
         for bundle in scores:
             if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
@@ -68,14 +72,20 @@ def uploadGrade():
                 returnMsg += "Rubric not found for assignment: " + canvasAssignment.name + "\n"
                 continue
             for criterion in scores[bundle]:
-                if emailOrSID == "Email":
-                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
-                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
-                else:
-                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
-                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                try:
+                    if emailOrSID == "Email":
+                        gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
+                                                          canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                          canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                    else:
+                        gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
+                                                          canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                          canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                except Exception as e:
+                    print(e)
+                    print("Error uploading scores for assignment: " + canvasAssignment.name)
+                    returnMsg += "Error uploading scores for assignment: " + canvasAssignment.name + "\n"
+                    continue
     print("Done!")
     return "Done!"
 
@@ -90,8 +100,17 @@ def localGrade():
         if "_Resubmission" in assignment:
             print("Skipping resubmission assignment: " + assignment)
             continue
-        scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
-        gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+        try:
+            scores = gradescopeUtil.getGradescopeScores(assignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+        except NotADirectoryError:
+            print("Skipping " + assignment + " because it is not a directory")
+            continue
+        try:
+            gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+        except Exception as e:
+            print(e)
+            print("Error outputting scores for assignment: " + assignment)
+            continue
     print("Done!")
     return "Done!"
 
@@ -105,7 +124,11 @@ def uploadResubmission():
     emailOrSID = request.args.get('emailOrSID')
     gradescopeColumn = request.args.get('gradescopeColumn')
     resubmissionAssignment = initialAssignment + "_Resubmission"
-    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+    try:
+        scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+    except NotADirectoryError:
+        print("Skipping " + initialAssignment + " because it is not a directory")
+        return "Done!"
     for bundle in scores:
         if bundle not in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
             print("Assignment " + bundle + " not found in config.yaml")
@@ -118,14 +141,19 @@ def uploadResubmission():
             print("Rubric not found for assignment: " + canvasAssignment.name)
             continue
         for criterion in scores[bundle]:
-            if emailOrSID == "Email":
-                gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
-                                                  canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                  canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
-            else:
-                gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
-                                                  canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
-                                                  canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+            try:
+                if emailOrSID == "Email":
+                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], True,
+                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+                else:
+                    gradescopeUtil.uploadCanvasScores(canvasAssignment, criterion, scores[bundle][criterion], False,
+                                                      canvasServer.CONFIG['CANVAS_API']['NET_ID_ENDPOINT'],
+                                                      canvasServer.CONFIG['CANVAS_API']['SID_ENDPOINT'])
+            except Exception as e:
+                print(e)
+                print("Error uploading scores for assignment: " + canvasAssignment.name)
+                continue
     print("Done!")
     return "Done!"
 
@@ -137,8 +165,17 @@ def localResubmission():
     resubmissionAssignment = initialAssignment + "_Resubmission"
     gradescopeColumn = request.args.get('gradescopeColumn')
     canvasColumn = request.args.get('canvasColumn')
-    scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
-    gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    try:
+        scores = gradescopeUtil.getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, canvasServer.GRADESCOPE_FILE_PATH)
+    except NotADirectoryError:
+        print("Skipping " + initialAssignment + " because it is not a directory")
+        return "Done!"
+    try:
+        gradescopeUtil.updateCanvasScores(scores, canvasColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    except Exception as e:
+        print(e)
+        print("Error outputting scores for assignment: " + initialAssignment)
+        return "Done!"
     print("Done!")
     return "Done!"
 
@@ -184,7 +221,12 @@ def localRemove():
     print("Removing assignment from local CSV files...")
     canvasServer.loadConfig()
     removeColumn = request.args.get('removeColumn')
-    gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    try:
+        gradescopeUtil.removeCanvasAssignmentLocal(removeColumn, canvasServer.CANVAS_FILE_PATH, canvasServer.OUTPUT_FILE_PATH)
+    except Exception as e:
+        print(e)
+        print("Error removing assignment from local CSV files.")
+        return "Done!"
     print("Done!")
     return "Done!"
 
