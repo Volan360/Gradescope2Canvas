@@ -14,7 +14,12 @@ API_URL = CONFIG['CANVAS_API']['URL']
 #Make a function called "Get Course Info" that takes in a course name and returns the course ID, as well as assignment IDs and names
 def getGradescopeScores(assignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     gradeScopeScores = {}
-    for question in os.listdir(gradescopeFilePath + assignment):
+    try:
+        directory = os.listdir(gradescopeFilePath + assignment)
+    except NotADirectoryError:
+        print("Skipping : " + gradescopeFilePath + assignment)
+        return
+    for question in directory:
         csvFile = open(gradescopeFilePath + assignment + os.sep + question, 'r', encoding='utf-8-sig')
         csvReader = csv.DictReader(csvFile)
         for row in csvReader:
@@ -110,7 +115,12 @@ def removeCanvasAssignmentLocal(assignment, canvasFilePath=CANVAS_FILE_PATH, out
         csvOutput.close()
 def getRegradeScores(initialAssignment, resubmissionAssignment, gradescopeColumn, gradescopeFilePath=GRADESCOPE_FILE_PATH):
     gradescopeScores = {}
-    for question in os.listdir(gradescopeFilePath + initialAssignment):
+    try:
+        directory = os.listdir(gradescopeFilePath + initialAssignment)
+    except NotADirectoryError:
+        print("Skipping : " + gradescopeFilePath + initialAssignment)
+        return
+    for question in directory:
         initialReader = csv.DictReader(open(gradescopeFilePath + initialAssignment + os.sep + question, 'r', encoding='utf-8-sig'))
         resubmissionReader = csv.DictReader(open(gradescopeFilePath + resubmissionAssignment + os.sep + question, 'r', encoding='utf-8-sig'))
         initialScores = {}
