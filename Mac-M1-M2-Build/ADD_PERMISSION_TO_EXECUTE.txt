@@ -1,0 +1,17 @@
+If you try to open the Gradescope2Canvas.command file and get an error saying it doesn't have the permission to run, please do the following
+
+1. Open Terminal
+2. Type "cd " (no quotes, but DO include the space after cd)
+3. Drag the folder containing the Gradescope2Canvas.command file into the Terminal window
+    - Folder name CANNOT contain spaces
+    - command should look something like cd /Users/username/Desktop/Gradescope2Canvas (possibly with different words between the / marks)
+4. Press enter
+5. Type "chmod +x Gradescope2Canvas.command" (no quotes)
+6. Press enter
+7. type "chmod +X Main" (no quotes)
+8. Press enter
+9. Hold the Ctrl button and click the Main file
+10. Click Open
+11. This should load a Terminal window, feel free to close it after about 5-10 seconds
+12. You should now be able to double-click the Gradescope2Canvas.command file and have it run
+    - A message saying "Listening on port 7777" should appear on the terminal window
