@@ -87,6 +87,16 @@ function onLoad() {
         removeScreen.classList.remove("hidden");
         setHelpInfo("removeAssignment");
     })
+
+    currentCourseBtn = document.getElementById("currentCourseBtn");
+    currentCourseScreen = document.getElementById("currentCourseScreen");
+    currentCourseBtn.addEventListener("click", () => {
+        //add active class if not already there
+        hideAllInfoScreen();
+        currentCourseScreen.classList.remove("hidden");
+
+        setHelpInfo("");
+    })
 }
 
 function setHelpInfo(actionName) {
@@ -439,6 +449,22 @@ function setListeners() {
             })
             .then(res => {
                 console.log(res)
+            })
+    })
+
+    const currentCourseBtn = document.getElementById("currentCourseBtn");
+    const currentCourseInfo = document.getElementById("currentCourseInfo");
+    currentCourseBtn.addEventListener("click", () => {
+        fetch(`http://localhost:${portNumber}/currentCourse`)
+            .then(res => {
+                //if there are any errors, do a window alert
+                if (res.status !== 200) {
+                    window.alert("There was an error getting the current course, check server for details, and try again")
+                }
+                return res.text()
+            })
+            .then(res => {
+                currentCourseInfo.innerText = res
             })
     })
 

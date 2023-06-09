@@ -230,6 +230,21 @@ def localRemove():
     print("Done!")
     return "Done!"
 
+@app.route('/currentCourse')
+def currentCourse():
+    print("Getting current course...")
+    canvasServer.loadConfig()
+    try:
+        courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
+        course = canvasServer.CANVAS.get_course(courseId)
+        courseInfo = course.name + "\n"
+        for assignment in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
+            courseInfo += "\n" + assignment
+    except Exception as e:
+        print(e)
+        print("Error getting current course.")
+        return "No course set up yet. Please set up a course first."
+    return courseInfo
 
 if __name__ == '__main__':
     from waitress import serve
