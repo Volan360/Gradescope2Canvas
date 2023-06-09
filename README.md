@@ -16,27 +16,27 @@ This step only needs to be performed once or until the API key you provided is i
 8. Paste your KEY after the colon on the line that says "KEY: ", remember to leave a space between
    the colon and key
 9. Save "config.yaml"
-   9.a FOR MAC USERS:
-    - Open the terminal (command + spacebar, type "terminal", press enter)
-    - Type "cd " (with a space after cd, no quotes)
-    - Drag the Gradescope2Canvas folder into the terminal window
-        - This should result in something similar to "cd /Users/username/Downloads/Gradescope2Canvas"
-    - Press enter
-    - Type "chmod +x Gradescope2Canvas.command" (no quotes)
-    - Press enter
-    - Type "chmod +x Main" (no quotes)
-    - Press enter
-    - Close the terminal
-    - Hold the control key and click on Main
-    - Click on "Open"
-    - This should open a terminal window, wait a few seconds then close the window
+    - 9.a FOR MAC USERS:
+      - Open the terminal (command + spacebar, type "terminal", press enter)
+      - Type "cd " (with a space after cd, no quotes)
+      - Drag the Gradescope2Canvas folder into the terminal window
+          - This should result in something similar to "cd /Users/username/Downloads/Gradescope2Canvas"
+      - Press enter
+      - Type "chmod +x Gradescope2Canvas.command" (no quotes)
+      - Press enter
+      - Type "chmod +x Main" (no quotes)
+      - Press enter
+      - Close the terminal
+      - Hold the control key and click on Main
+      - Click on "Open"
+      - This should open a terminal window, wait a few seconds then close the window
 10. Open Gradescope2Canvas by double-clicking "Gradescope2Canvas.bat" or "Gradescope2Canvas.command"
 
 # Help:
 The help button is included to help you navigate the software. Toggle it on then click
 on any other button to learn more about how to use it.
 
-Course Setup:
+# Course Setup:
 Specifies which course to upload grades for and what bundles are available. You will need
 to take this step at the start of each quarter and whenever you want to change the course.
 where grades will be updated.
