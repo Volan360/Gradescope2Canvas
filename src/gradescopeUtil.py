@@ -63,7 +63,7 @@ def updateCanvasScores(gradeScopeScores, canvasColumn,canvasFilePath=CANVAS_FILE
                 try:
                     sid = int(row[canvasColumn])
                 except ValueError:
-                    print("Could not convert " + row[canvasColumn] + " to an integer")
+                    print("Error matching SIDs, could not convert " + row[canvasColumn] + " to an integer")
                     continue
                 if sid in gradeScopeScores[tag][assignment].keys():
                     row["Points: " + assignment] = str(int(gradeScopeScores[tag][assignment][sid]))
