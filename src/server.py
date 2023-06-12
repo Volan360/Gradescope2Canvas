@@ -35,6 +35,23 @@ CORS(app)
 def index():
     return "<h1>Hello!</h1>"
 
+@app.route("/setTotalScores")
+def setTotalScores():
+    print("Setting total scores...")
+    canvasServer.loadConfig()
+    courseId = canvasServer.CONFIG['CANVAS_API']['COURSE_ID']
+    course = canvasServer.CANVAS.get_course(courseId)
+    for assignment in canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS']:
+        try:
+            canvasAssignment = course.get_assignment(canvasServer.CONFIG['CANVAS_API']['ASSIGNMENTS'][assignment])
+            gradescopeUtil.setTotalScores(canvasAssignment)
+        except Exception as e:
+            print(e)
+            print("Error setting total scores for assignment: " + assignment)
+            continue
+    print("Done!")
+    return "Done!"
+
 @app.route('/uploadGrade')
 def uploadGrade():
     print("Uploading scores...")

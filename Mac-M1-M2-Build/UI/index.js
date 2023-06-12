@@ -14,6 +14,7 @@ function onLoad() {
     hideAllInfoScreen();
     let uploadGradeScreen = document.getElementById("uploadGradeScreen");
     uploadGradeScreen.classList.remove("hidden");
+    setHelpInfo("")
 
 
     uploadBtn = document.getElementById("uploadBtn");
@@ -48,16 +49,7 @@ function onLoad() {
 
     helpBtn = document.getElementById("helpBtn");
     helpBtn.addEventListener("click", () => {
-        //add active class if not already there
-        let helpInfo = document.getElementsByClassName("helpInfo")[0];
         setHelpInfo("")
-        if (!helpBtn.classList.contains("active")) {
-            helpBtn.classList.add("active");
-            helpInfo.classList.remove("hidden");
-        } else {
-            helpBtn.classList.remove("active");
-            helpInfo.classList.add("hidden");
-        }
     })
 
     regradeBtn = document.getElementById("regradeBtn");
@@ -94,6 +86,16 @@ function onLoad() {
         //add active class if not already there
         hideAllInfoScreen();
         currentCourseScreen.classList.remove("hidden");
+
+        setHelpInfo("");
+    })
+
+    setTotalsBtn = document.getElementById("setTotalsBtn");
+    setTotalsScreen = document.getElementById("setTotalsScreen");
+    setTotalsBtn.addEventListener("click", () => {
+        //add active class if not already there
+        hideAllInfoScreen();
+        setTotalsScreen.classList.remove("hidden");
 
         setHelpInfo("");
     })
@@ -465,6 +467,21 @@ function setListeners() {
             })
             .then(res => {
                 currentCourseInfo.innerText = res
+            })
+    })
+
+    setTotalsSubmitBtn = document.getElementById("setTotalsSubmitBtn");
+    setTotalsSubmitBtn.addEventListener("click", () => {
+        fetch(`http://localhost:${portNumber}/setTotalScores`)
+            .then(res => {
+                //if there are any errors, do a window alert
+                if (res.status !== 200) {
+                    window.alert("There was an error setting the totals, check server for details, and try again")
+                }
+                return res.text()
+            })
+            .then(res => {
+                console.log(res)
             })
     })
 
