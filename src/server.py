@@ -48,7 +48,6 @@ def setTotalScores():
         except Exception as e:
             print(e)
             print("Error setting total scores for assignment: " + assignment)
-            continue
     print("Done!")
     return "Done!"
 

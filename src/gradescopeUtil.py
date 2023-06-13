@@ -181,7 +181,12 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
     for criterion in assignment.rubric:
         if criterion['description'] == criterionName:
             criterion_id = criterion['id']
+    previousRubricAssessment = {}
     for submission in assignment.get_submissions(include=['rubric_assessment', 'user']):
+        try:
+            previousRubricAssessment = submission.rubric_assessment
+        except:
+            print("Could not find the rubric assessment for " + submission.user['short_name'] + " for " + assignment.name + ", skipping")
         try:
             if byEmailPrefix:
                 matchColumn = submission.user[netIDEnpoint]
@@ -211,14 +216,16 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
                 if "rubric_assessment'" in str(e):
                     print("This is likely because the student has no submission for the bundle, creating an empty submission")
                     try:
-                        zeroedRubricAssessment = {}
+                        zeroedRubricAssessment = previousRubricAssessment
                         for criterion in assignment.rubric:
                             zeroedRubricAssessment[criterion['id']] = {'points': 0}
                         try:
                             zeroedRubricAssessment[criterion_id]['points'] = assignmentScores[matchColumn]
                         except Exception as a:
                             zeroedRubricAssessment[criterion_id] = {'points': 0}
-                        submission.edit(submission={'posted_grade': 0, 'rubric_assessment': zeroedRubricAssessment})
+                        submission.edit(submission={'posted_grade': 0})
+                        submission.rubric_assessment = zeroedRubricAssessment
+                        submission.edit(rubric_assessment=submission.rubric_assessment)
                         print("Successfully created an empty submission for " + submission.user['short_name'] + " for " + assignment.name)
                     except Exception as e:
                         print(e)
@@ -239,12 +246,17 @@ def uploadCanvasScores(assignment, criterionName, assignmentScores, byEmailPrefi
 
 def setTotalScores(assignment):
     for submission in assignment.get_submissions(include=['rubric_assessment', 'user']):
-        totalScore = 0
-        for criterion in submission.rubric_assessment:
-            if "points" in submission.rubric_assessment[criterion]:
-                totalScore += submission.rubric_assessment[criterion]['points']
-        submission.edit(submission={'posted_grade': totalScore})
-        print("Successfully set the total score for " + submission.user['short_name'] + " for " + assignment.name + " to " + str(totalScore))
+        print(yaml.dump(submission.rubric_assessment))
+        try:
+            totalScore = 0
+            for criterion in submission.rubric_assessment:
+                if "points" in submission.rubric_assessment[criterion]:
+                    totalScore += submission.rubric_assessment[criterion]['points']
+            submission.edit(submission={'posted_grade': totalScore})
+            print("Successfully set the total score for " + submission.user['short_name'] + " for " + assignment.name + " to " + str(totalScore))
+        except Exception as e:
+            print(e)
+            print("Failed to set the total score for " + submission.user['short_name'] + " for " + assignment.name + " to " + str(totalScore))
 if __name__ == "__main__":
     #set variables from config
     try:
