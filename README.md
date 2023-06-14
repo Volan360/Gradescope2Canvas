@@ -24,10 +24,10 @@ This step only needs to be performed once or until the API key you provided is i
       - Press enter
       - Type "chmod +x Gradescope2Canvas.command" (no quotes)
       - Press enter
-      - Type "chmod +x Main" (no quotes)
+      - Type "chmod +x Server" (no quotes)
       - Press enter
       - Close the terminal
-      - Hold the control key and click on Main
+      - Hold the control key and click on Server
       - Click on "Open"
       - This should open a terminal window, wait a few seconds then close the window
 10. Open Gradescope2Canvas by double-clicking "Gradescope2Canvas.bat" or "Gradescope2Canvas.command"
@@ -142,10 +142,10 @@ If you wish to remove an assignment from the conversion use the steps below.
    - Install Python 3.10 (tested on 3.10.11)
    - Clone the repository
    - Install the required packages by running "pip install -r requirements.txt" in the repository directory
-   - Run "sudo pyinstaller src/server.py -n Main --windowed --noconfirm --clean --onefile" in the repository directory
+   - Run "sudo pyinstaller src/server.py -n Server --windowed --noconfirm --clean --onefile" in the repository directory
       - You'll need to enter your password
-   - Move the "Main" from the newly created "dist" folder to one of the "Mac-Build" folder (NOT Main.app)
+   - Move the "Server" from the newly created "dist" folder to one of the "Mac-Build" folder (NOT Server.app)
       - If you built the program on an Intel Mac, move it to the "Mac-Intel-Build" folder
       - If you built the program on an M1 or M2 Mac, move it to the "Mac-M1-M2-Build" folder
-   - Delete the "build" and "dist" folders, as well as the main.spec file
+   - Delete the "build" and "dist" folders, as well as the server.spec file
    - Test the program by double-clicking "Gradescope2Canvas.command" in the "Mac-Build" folder you just updated
